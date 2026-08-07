@@ -493,9 +493,8 @@ body{font-family:var(--font-sans)}
 
   /* Светлая Атмосфера */
   .mobile-fixed-nav.on-light{
-    color#281712;
+    color:#281712;
   }
-
   /* При открытом меню fixed-шапку прячем,
      чтобы не было двойного O’BLOCK и крестика */
   .mobile-fixed-nav.is-menu-open{
