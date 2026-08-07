@@ -488,7 +488,7 @@ body{font-family:var(--font-sans)}
 
   /* Главный тёмный экран */
   .mobile-fixed-nav.on-dark{
-    color#f7f0ea;
+    color:#f7f0ea;
   }
 
   /* Светлая Атмосфера */

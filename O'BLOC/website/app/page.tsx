@@ -134,13 +134,13 @@ export default function Home() {
     headerOnLight ? "on-light" : "on-dark"
   }`}
 >
-      className="brand"
+  <a
+    className="brand"
     href="#home"
     aria-label="O’BLOCK — на главную"
   >
     O’BLOCK
   </a>
-
   <button
     ref={menuButtonRef}
     className="menu-button"
