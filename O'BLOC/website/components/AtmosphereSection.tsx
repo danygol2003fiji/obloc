@@ -105,13 +105,19 @@ export default function AtmosphereSection() {
       schedule();
     };
 
-    const visibilityObserver = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      if (entry.isIntersecting) {
-        section.dataset.visible = "true";
-        schedule();
-      }
-    }, { rootMargin: "20% 0px 20%" });
+   const visibilityObserver = new IntersectionObserver(([entry]) => {
+  visible = entry.isIntersecting;
+
+  if (entry.isIntersecting) {
+    section.dataset.visible = "true";
+    schedule();
+  }
+}, {
+  rootMargin: desktop.matches
+    ? "20% 0px 20%"
+    : "0px 0px -18% 0px",
+  threshold: desktop.matches ? 0 : 0.08,
+});
     visibilityObserver.observe(section);
 
     const pointerHandlers = cardNodes.map((card, index) => {
