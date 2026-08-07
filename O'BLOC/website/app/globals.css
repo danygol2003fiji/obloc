@@ -438,101 +438,162 @@ body{font-family:var(--font-sans)}
 .mobile-fixed-nav{
   display:none;
 }
-
 @media(max-width:700px){
 
   .mobile-fixed-nav{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    z-index:1000;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
 
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 
-    padding:28px 28px 0;
-    pointer-events:none;
-
-    color:#f7f0ea;
-
-    transition:
-      opacity .22s ease,
-      visibility .22s ease,
-      color .32s ease;
-  }
-
-  .mobile-fixed-nav .brand,
-  .mobile-fixed-nav .menu-button{
-    pointer-events:auto;
-  }
-
-  .mobile-fixed-nav .brand{
-    color:currentColor!important;
-    transition:color .32s ease;
-  }
-
-  .mobile-fixed-nav .menu-button{
-    color:currentColor!important;
-  }
-
-  .mobile-fixed-nav .menu-button i{
-    background:currentColor!important;
-    border-color:currentColor!important;
-
-    transition:
-      background-color .32s ease,
-      border-color .32s ease;
-  }
-
-  /* Главный тёмный экран */
-  .mobile-fixed-nav.on-dark{
-    color:#f7f0ea;
-  }
-
-  /* Светлая Атмосфера */
-  .mobile-fixed-nav.on-light{
-    color:#281712;
-  }
-  /* При открытом меню fixed-шапку прячем,
-     чтобы не было двойного O’BLOCK и крестика */
-  .mobile-fixed-nav.is-menu-open{
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
-  }
-
-  /* Старые O’BLOCK и гамбургер внутри hero
-     остаются на месте, но невидимы */
-  .transition-hero > .nav > .brand,
-  .transition-hero > .nav > .menu-button{
-    visibility:hidden;
-    pointer-events:none;
-  }
-
-  .chapter-transition>.transition-hero{
-    position:sticky!important;
-    top:0;
-    z-index:1;
-    transform:none!important;
-    filter:none!important;
-  }
-  .hero-foot{
-  width:100%;
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:space-between!important;
-  padding-left:28px!important;
-  padding-right:28px!important;
+  padding:28px 28px 0;
+  pointer-events:none;
 }
 
-.hero-foot > *:first-child{
-  margin-left:0!important;
+.mobile-fixed-nav .brand,
+.mobile-fixed-nav .menu-button{
+  pointer-events:auto;
 }
 
-.hero-foot > *:last-child{
-  margin-left:auto!important;
+/* Старые элементы остаются на своих местах,
+   но на телефоне их не видно */
+.transition-hero > .nav > .brand,
+.transition-hero > .nav > .menu-button{
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.chapter-transition>.transition-hero{
+  position:sticky!important;
+  top:0;
+  z-index:1;
+  transform:none!important;
+  filter:none!important;
+}
+.atmosphere-panel[data-motion="mobile"] .atmosphere-mask{
+  overflow:visible;
+}
+  .atmosphere-panel{
+  border-radius:14px 14px 0 0;
+  box-shadow:0 -16px 42px rgba(12,6,4,.14);
+}
+.atmosphere-touch-light{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+
+  background:
+  radial-gradient(
+    circle 580px at
+    var(--touch-light-x,50%)
+    var(--touch-light-y,50%),
+    rgba(220,150,210,.48) 0%,
+    rgba(220,150,210,.34) 16%,
+    rgba(220,150,210,.20) 32%,
+    rgba(220,150,210,.10) 52%,
+    rgba(220,150,210,.04) 70%,
+    transparent 88%
+  );
+
+  opacity:0;
+ transition:opacity .1s ease;
+}
+
+.atmosphere-panel[data-touch-active="true"] .atmosphere-touch-light{
+  opacity:1;
+}
+
+.atmosphere-intro,
+.atmosphere-cards{
+  position:relative;
+  z-index:3;
+}
+
+.atmosphere-panel[data-motion="mobile"]{
+  opacity:1;
+  transform:none!important;
+  transition:none!important;
+}
+
+.atmosphere-intro{display:block}
+.atmosphere-label{margin:0 0 32px}
+.atmosphere-heading{font-size:clamp(38px,10.7vw,51px);line-height:1.0}
+.atmosphere-copy{margin-top:28px;font-size:14px;line-height:1.72}
+.atmosphere-cards{margin-top:48px}
+
+.atmosphere-panel .mood{
+  filter:none;
+}
+
+.mood-visual{
+  transform:scale(1.04)!important;
+}
+
+/* Текст теперь двигается не по таймеру, а вместе со скроллом */
+.atmosphere-panel[data-motion="mobile"] .atmosphere-label{
+  opacity:var(--label-opacity,0);
+  transform:translate3d(0,var(--label-y,34px),0);
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .atmosphere-line-one{
+  opacity:var(--line-one-opacity,0);
+  transform:translate3d(0,var(--line-one-y,64px),0);
+  filter:blur(var(--line-one-blur,5px));
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .atmosphere-line-two{
+  opacity:var(--line-two-opacity,0);
+  transform:translate3d(0,var(--line-two-y,64px),0);
+  filter:blur(var(--line-two-blur,5px));
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .atmosphere-pink-word{
+  opacity:var(--pink-opacity,0);
+  transform:translate3d(0,var(--pink-y,12px),0);
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .atmosphere-copy{
+  opacity:var(--copy-opacity,0);
+  transform:translate3d(0,var(--copy-y,30px),0);
+  filter:blur(var(--copy-blur,3px));
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .mood{
+  opacity:var(--card-opacity,0);
+  transform:
+    translate3d(0,var(--card-y,68px),0)
+    scale(var(--card-scale,1));
+  transition:none!important;
+}
+
+/* Небольшой свет под пальцем */
+.atmosphere-panel .mood-light{
+  display:block;
+  background:
+    radial-gradient(
+      circle 105px at var(--card-light-x,50%) var(--card-light-y,50%),
+      rgba(255,236,248,.20) 0%,
+      rgba(233,155,239,.09) 34%,
+      transparent 72%
+    );
+  opacity:0;
+  transition:opacity .16s ease!important;
+}
+
+.atmosphere-panel .mood:active .mood-light,
+.atmosphere-panel .mood[data-touch-light="true"] .mood-light{
+  opacity:1;
 }
 }
 
@@ -544,23 +605,18 @@ body{font-family:var(--font-sans)}
 @media(max-width:700px){
 
   .mobile-fixed-nav{
-    z-index:9000!important;
-    background:#21100c;
-    padding:28px 28px 18px!important;
-    box-sizing:border-box;
-  }
-
-  .mobile-fixed-nav.on-dark{
     color:#f7f0ea;
-    background:#21100c
-  }
-
-  .mobile-fixed-nav.on-light{
-    color:#281712;
-    background:#efeae2;
+    transition:
+      opacity .22s ease,
+      visibility .22s ease,
+      color .32s ease;
   }
 
   .mobile-fixed-nav .brand{
+    color:currentColor!important;
+  }
+
+  .mobile-fixed-nav .menu-button{
     color:currentColor!important;
   }
 
@@ -569,61 +625,293 @@ body{font-family:var(--font-sans)}
     border-color:currentColor!important;
   }
 
-}
-@media(max-width:700px){
-
-  .chapter-transition{
-    position:relative;
+  .mobile-fixed-nav.on-dark{
+    color:#f7f0ea;
   }
 
-  .chapter-transition > #experience{
-    position:sticky!important;
-    bottom:0;
+  .mobile-fixed-nav.on-light{
+    color:#281712;
+  }
+
+  .mobile-fixed-nav.is-menu-open{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+  }
+
+  .hero-foot{
+    width:100%;
+    padding-left:28px!important;
+    padding-right:28px!important;
+  }
+  @media(max-width:700px){
+
+  /* 1. Верхняя зона: контент не залезает под O’BLOCK и гамбургер */
+  .atmosphere-intro{
+    padding-top:96px!important;
+  }
+
+  /* 2. Открытое меню всегда выше ВСЕХ секций */
+  .mobile-menu{
+    position:fixed!important;
+    inset:0!important;
+    z-index:5000!important;
+
+    width:100%!important;
+    height:100dvh!important;
+
+    background:#21100c!important;
+    isolation:isolate;
+    overflow-y:auto;
+  }
+
+  .mobile-menu-head{
+    position:relative;
     z-index:2;
   }
 
-  .chapter-transition > #menu{
-    position:relative!important;
-    z-index:3;
-    min-height:100dvh;
-    margin-top:0!important;
-    border-radius:8px 8px 0 0;
-    box-shadow:0 -10px 32px rgba(24,12,8,.12);
+  .mobile-menu nav,
+  .mobile-menu > a{
+    position:relative;
+    z-index:2;
+  }
+
+  /* Никакой текст страницы не должен просвечивать поверх меню */
+  body:has(.mobile-menu){
+    overflow:hidden!important;
+  }
+
+  /* fixed O’BLOCK / hamburger остаются выше обычных секций */
+  .mobile-fixed-nav{
+    z-index:4000!important;
+  }
+
+  .mobile-fixed-nav.is-menu-open{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+
+  /* 3. Эффект последовательного "вытекания" секций */
+
+  #experience{
+    position:relative;
+    z-index:10;
+  }
+
+  #menu{
+    position:sticky;
+    top:0;
+    z-index:20;
+  }
+
+  #story{
+    position:sticky;
+    top:0;
+    z-index:30;
+  }
+
+  #contacts{
+    position:sticky;
+    top:0;
+    z-index:40;
+  }
+
+  #booking{
+    position:sticky;
+    top:0;
+    z-index:50;
+  }
+
+  /* Новая секция визуально накрывает предыдущую */
+  #menu,
+  #story,
+  #contacts,
+  #booking{
+    border-radius:14px 14px 0 0;
+    box-shadow:0 -18px 46px rgba(20,10,7,.14);
     overflow:hidden;
+  }
+
+  /* Чтобы начало текста каждой новой секции
+     не попадало под постоянную верхнюю навигацию */
+  #menu,
+  #story,
+  #contacts,
+  #booking{
+    scroll-margin-top:84px;
+  }
+}
+@media(max-width:700px){
+
+  /* ========================================
+     FIXED MOBILE NAV
+     Контент уезжает ПОД шапку, а не поверх неё
+  ======================================== */
+
+  .mobile-fixed-nav{
+    z-index:6000!important;
+    padding:28px 28px 18px!important;
+    box-sizing:border-box;
+
+    transition:
+      opacity .22s ease,
+      visibility .22s ease,
+      color .32s ease,
+      background .32s ease;
+  }
+
+  .mobile-fixed-nav.on-dark{
+    color:#f7f0ea;
+
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(32,16,12,.98) 0%,
+        rgba(32,16,12,.92) 62%,
+        rgba(32,16,12,0) 100%
+      );
+  }
+
+  .mobile-fixed-nav.on-light{
+    color:#281712;
+
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(239,234,226,.98) 0%,
+        rgba(239,234,226,.92) 62%,
+        rgba(239,234,226,0) 100%
+      );
+  }
+
+
+  /* ========================================
+     MOBILE MENU
+     Меню ВСЕГДА выше Atmosphere и других секций
+  ======================================== */
+
+  body:has(.mobile-menu){
+    overflow:hidden!important;
+  }
+
+  body:has(.mobile-menu) .chapter-transition{
+    position:relative!important;
+    z-index:7000!important;
+  }
+
+  body:has(.mobile-menu) .transition-hero{
+    z-index:7000!important;
+  }
+
+  .mobile-menu{
+    position:fixed!important;
+    inset:0!important;
+    z-index:8000!important;
+
+    width:100vw!important;
+    height:100dvh!important;
+
+    background:#21100c!important;
+    overflow-y:auto!important;
     isolation:isolate;
   }
 
-  #menu .section-head{
-    opacity:0;
-    transform:translateY(34px);
-    filter:blur(6px);
-
-    transition:
-      opacity .75s ease,
-      transform .9s cubic-bezier(.2,.7,.2,1),
-      filter .75s ease;
+  .mobile-menu::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:-1;
+    background:#21100c;
   }
 
-  #menu .menu-layout{
-    opacity:0;
-    transform:translateY(42px);
-    filter:blur(5px);
-
-    transition:
-      opacity .8s ease .18s,
-      transform 1s cubic-bezier(.2,.7,.2,1) .12s,
-      filter .8s ease .18s;
+  .mobile-menu-head{
+    position:relative;
+    z-index:2;
   }
 
-  #menu[data-reveal="true"] .section-head{
-    opacity:1;
-    transform:translateY(0);
-    filter:blur(0);
+  .mobile-fixed-nav.is-menu-open{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
   }
 
-  #menu[data-reveal="true"] .menu-layout{
-    opacity:1;
-    transform:translateY(0);
-    filter:blur(0);
+
+  /* ========================================
+     HERO FOOTER
+     Возвращаем время строго в левый нижний угол
+  ======================================== */
+
+  .hero-foot{
+    width:100%!important;
+    left:0!important;
+    right:0!important;
+
+    padding-left:28px!important;
+    padding-right:28px!important;
+    margin-left:0!important;
+    margin-right:0!important;
+
+    box-sizing:border-box!important;
+
+    display:flex!important;
+    align-items:flex-end!important;
+    justify-content:space-between!important;
   }
+
+  .hero-foot > *:first-child{
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+
+  .hero-foot > *:last-child{
+    margin-left:auto!important;
+  }
+
+
+  /* ========================================
+     STACKED SECTIONS
+     Каждый следующий раздел заезжает сверху
+     на предыдущий
+  ======================================== */
+
+  #experience{
+    position:relative;
+    z-index:10;
+  }
+
+  #menu{
+    position:relative;
+    z-index:20;
+    margin-top:-14px;
+  }
+
+  #story{
+    position:relative;
+    z-index:30;
+    margin-top:-14px;
+  }
+
+  #booking{
+    position:relative;
+    z-index:40;
+    margin-top:-14px;
+  }
+
+  #contacts{
+    position:relative;
+    z-index:50;
+    margin-top:-14px;
+  }
+
+  #menu,
+  #story,
+  #booking,
+  #contacts{
+    border-radius:14px 14px 0 0;
+    box-shadow:0 -18px 46px rgba(20,10,7,.16);
+    overflow:hidden;
+  }
+
+}
 }
