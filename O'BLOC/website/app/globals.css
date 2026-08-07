@@ -438,7 +438,21 @@ body{font-family:var(--font-sans)}
 
 @media(max-width:700px){
   .chapter-transition>.transition-hero{position:relative!important;transform:none!important;filter:none!important}
-  .atmosphere-panel{transform:none!important;border-radius:14px 14px 0 0;box-shadow:0 -16px 42px rgba(12,6,4,.14)}
+  .atmosphere-panel{
+  border-radius:14px 14px 0 0;
+  box-shadow:0 -16px 42px rgba(12,6,4,.14);
+}
+
+.atmosphere-panel[data-motion="mobile"]{
+  opacity:0;
+  transform:translate3d(0,48px,0);
+  transition:opacity .8s ease,transform .9s cubic-bezier(.2,.75,.2,1);
+}
+
+.atmosphere-panel[data-motion="mobile"][data-visible="true"]{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
   .atmosphere-intro{display:block}
   .atmosphere-label{margin:0 0 32px}
   .atmosphere-heading{font-size:clamp(38px,10.7vw,51px);line-height:1.01}
