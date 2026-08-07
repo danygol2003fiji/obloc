@@ -37,12 +37,24 @@ export default function AtmosphereSection() {
 
     const render = () => {
       frame = 0;
-      if (!visible || document.hidden || reduceMotion.matches || !desktop.matches) return;
+      if (!visible || document.hidden || reduceMotion.matches) return;
 
-      const viewport = window.innerHeight;
-      const start = section.offsetTop - viewport;
-      const progress = clamp((window.scrollY - start) / viewport);
-      const eased = progress * progress * (3 - 2 * progress);
+     const viewport = window.innerHeight;
+const start = section.offsetTop;
+
+const desktopProgress = clamp(
+  (window.scrollY - start) / viewport
+);
+
+const mobileProgress = clamp(
+  (window.scrollY - (start - viewport * 0.5)) / viewport
+);
+
+const progress = desktop.matches
+  ? desktopProgress
+  : mobileProgress;
+
+const eased = progress * progress * (3 - 2 * progress);
 
       section.style.setProperty("--panel-y", `${((1 - eased) * viewport * 0.28).toFixed(2)}px`);
       section.style.setProperty("--panel-scale", (0.988 + eased * 0.012).toFixed(4));
@@ -120,28 +132,53 @@ export default function AtmosphereSection() {
 });
     visibilityObserver.observe(section);
 
-    const pointerHandlers = cardNodes.map((card, index) => {
-      const onMove = (event: PointerEvent) => {
-        if (!finePointer.matches || !desktop.matches || reduceMotion.matches) return;
-        const rect = card.getBoundingClientRect();
-        lights[index].tx = clamp((event.clientX - rect.left) / rect.width) * 100;
-        lights[index].ty = clamp((event.clientY - rect.top) / rect.height) * 100;
-        lights[index].active = true;
-        lightMoving = true;
-        schedule();
-      };
-      const onLeave = () => {
-        lights[index].tx = 50;
-        lights[index].ty = 50;
-        lights[index].active = false;
-        lightMoving = true;
-        schedule();
-      };
-      card.addEventListener("pointermove", onMove);
-      card.addEventListener("pointerleave", onLeave);
-      return { card, onMove, onLeave };
-    });
+const pointerHandlers = cardNodes.map((card, index) => {
+  const onMove = (event: PointerEvent) => {
+    if (reduceMotion.matches) return;
+    if (desktop.matches && !finePointer.matches) return;
 
+    const rect = card.getBoundingClientRect();
+
+    lights[index].tx =
+      clamp((event.clientX - rect.left) / rect.width) * 100;
+
+    lights[index].ty =
+      clamp((event.clientY - rect.top) / rect.height) * 100;
+
+    lights[index].active = true;
+    lightMoving = true;
+    schedule();
+  };
+
+  const onDown = (event: PointerEvent) => {
+    if (reduceMotion.matches) return;
+
+    card.dataset.touchLight = "true";
+    onMove(event);
+  };
+
+  const onUp = () => {
+    delete card.dataset.touchLight;
+  };
+
+  const onLeave = () => {
+    delete card.dataset.touchLight;
+
+    lights[index].tx = 50;
+    lights[index].ty = 50;
+    lights[index].active = false;
+    lightMoving = true;
+    schedule();
+  };
+
+  card.addEventListener("pointerdown", onDown);
+  card.addEventListener("pointermove", onMove);
+  card.addEventListener("pointerup", onUp);
+  card.addEventListener("pointercancel", onUp);
+  card.addEventListener("pointerleave", onLeave);
+
+  return { card, onDown, onMove, onUp, onLeave };
+});
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", configure, { passive: true });
     document.addEventListener("visibilitychange", schedule);
@@ -158,10 +195,13 @@ export default function AtmosphereSection() {
       document.removeEventListener("visibilitychange", schedule);
       reduceMotion.removeEventListener("change", configure);
       desktop.removeEventListener("change", configure);
-      pointerHandlers.forEach(({ card, onMove, onLeave }) => {
-        card.removeEventListener("pointermove", onMove);
-        card.removeEventListener("pointerleave", onLeave);
-      });
+      pointerHandlers.forEach(({ card, onDown, onMove, onUp, onLeave }) => {
+  card.removeEventListener("pointerdown", onDown);
+  card.removeEventListener("pointermove", onMove);
+  card.removeEventListener("pointerup", onUp);
+  card.removeEventListener("pointercancel", onUp);
+  card.removeEventListener("pointerleave", onLeave);
+});
     };
   }, []);
 

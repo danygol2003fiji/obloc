@@ -437,78 +437,97 @@ body{font-family:var(--font-sans)}
 }
 
 @media(max-width:700px){
-  .chapter-transition>.transition-hero{position:relative!important;transform:none!important;filter:none!important}
+.chapter-transition>.transition-hero{
+  position:sticky!important;
+  top:0;
+  z-index:1;
+  transform:none!important;
+  filter:none!important;
+}
   .atmosphere-panel{
   border-radius:14px 14px 0 0;
   box-shadow:0 -16px 42px rgba(12,6,4,.14);
 }
 
 .atmosphere-panel[data-motion="mobile"]{
-  opacity:0;
-  transform:translate3d(0,64px,0);
-  transition:
-    opacity 1.15s ease,
-    transform 1.35s cubic-bezier(.2,.75,.2,1);
-}
-
-.atmosphere-panel[data-motion="mobile"][data-visible="true"]{
   opacity:1;
-  transform:translate3d(0,0,0);
+  transform:none!important;
+  transition:none!important;
 }
 
-  .atmosphere-intro{display:block}
-  .atmosphere-label{margin:0 0 32px}
-  .atmosphere-heading{font-size:clamp(38px,10.7vw,51px);line-height:1.01}
-  .atmosphere-copy{margin-top:28px;font-size:14px;line-height:1.72}
-  .atmosphere-cards{margin-top:48px}
-  .atmosphere-panel .mood{transform:none;filter:none}
-  .atmosphere-panel .mood-light{display:none}
-  .mood-visual{transform:scale(1.04)!important}
-.atmosphere-panel[data-motion="mobile"] .atmosphere-label,
-.atmosphere-panel[data-motion="mobile"] .atmosphere-line,
-.atmosphere-panel[data-motion="mobile"] .atmosphere-copy,
-.atmosphere-panel[data-motion="mobile"] .mood{
-  opacity:0;
-  transform:translate3d(0,52px,0);
-  transition:
-    opacity .8s ease,
-    transform .95s cubic-bezier(.2,.75,.2,1);
+.atmosphere-intro{display:block}
+.atmosphere-label{margin:0 0 32px}
+.atmosphere-heading{font-size:clamp(38px,10.7vw,51px);line-height:1.01}
+.atmosphere-copy{margin-top:28px;font-size:14px;line-height:1.72}
+.atmosphere-cards{margin-top:48px}
+
+.atmosphere-panel .mood{
+  filter:none;
 }
 
-.atmosphere-panel[data-motion="mobile"][data-visible="true"] .atmosphere-label,
-.atmosphere-panel[data-motion="mobile"][data-visible="true"] .atmosphere-line,
-.atmosphere-panel[data-motion="mobile"][data-visible="true"] .atmosphere-copy,
-.atmosphere-panel[data-motion="mobile"][data-visible="true"] .mood{
-  opacity:1;
-  transform:translate3d(0,0,0);
+.mood-visual{
+  transform:scale(1.04)!important;
 }
 
+/* Текст теперь двигается не по таймеру, а вместе со скроллом */
 .atmosphere-panel[data-motion="mobile"] .atmosphere-label{
-  transition-delay:1.05s;
+  opacity:var(--label-opacity,0);
+  transform:translate3d(0,var(--label-y,34px),0);
+  transition:none!important;
 }
 
 .atmosphere-panel[data-motion="mobile"] .atmosphere-line-one{
-  transition-delay:1.18s;
+  opacity:var(--line-one-opacity,0);
+  transform:translate3d(0,var(--line-one-y,64px),0);
+  filter:blur(var(--line-one-blur,5px));
+  transition:none!important;
 }
 
 .atmosphere-panel[data-motion="mobile"] .atmosphere-line-two{
-  transition-delay:1.32s;
+  opacity:var(--line-two-opacity,0);
+  transform:translate3d(0,var(--line-two-y,64px),0);
+  filter:blur(var(--line-two-blur,5px));
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .atmosphere-pink-word{
+  opacity:var(--pink-opacity,0);
+  transform:translate3d(0,var(--pink-y,12px),0);
+  transition:none!important;
 }
 
 .atmosphere-panel[data-motion="mobile"] .atmosphere-copy{
-  transition-delay:1.48s;
+  opacity:var(--copy-opacity,0);
+  transform:translate3d(0,var(--copy-y,30px),0);
+  filter:blur(var(--copy-blur,3px));
+  transition:none!important;
 }
 
-.atmosphere-panel[data-motion="mobile"] .mood:nth-child(1){
-  transition-delay:1.70s;
+.atmosphere-panel[data-motion="mobile"] .mood{
+  opacity:var(--card-opacity,0);
+  transform:
+    translate3d(0,var(--card-y,68px),0)
+    scale(var(--card-scale,1));
+  transition:none!important;
 }
 
-.atmosphere-panel[data-motion="mobile"] .mood:nth-child(2){
-  transition-delay:1.88s;
+/* Небольшой свет под пальцем */
+.atmosphere-panel .mood-light{
+  display:block;
+  background:
+    radial-gradient(
+      circle 105px at var(--card-light-x,50%) var(--card-light-y,50%),
+      rgba(255,236,248,.20) 0%,
+      rgba(233,155,239,.09) 34%,
+      transparent 72%
+    );
+  opacity:0;
+  transition:opacity .16s ease!important;
 }
 
-.atmosphere-panel[data-motion="mobile"] .mood:nth-child(3){
-  transition-delay:2.06s;
+.atmosphere-panel .mood:active .mood-light,
+.atmosphere-panel .mood[data-touch-light="true"] .mood-light{
+  opacity:1;
 }
 }
 
