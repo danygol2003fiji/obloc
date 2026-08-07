@@ -49,6 +49,7 @@ const drinks = [
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [headerOnLight, setHeaderOnLight] = useState(false);
   const menuDialogRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -84,6 +85,29 @@ export default function Home() {
       menuButtonRef.current?.focus();
     };
   }, [menuOpen]);
+   useEffect(() => {
+  const atmosphere = document.getElementById("experience");
+  if (!atmosphere) return;
+
+  const updateHeaderTheme = () => {
+    const rect = atmosphere.getBoundingClientRect();
+
+    setHeaderOnLight(
+      rect.top <= 95 &&
+      rect.bottom > 95
+    );
+  };
+
+  updateHeaderTheme();
+
+  window.addEventListener("scroll", updateHeaderTheme, { passive: true });
+  window.addEventListener("resize", updateHeaderTheme);
+
+  return () => {
+    window.removeEventListener("scroll", updateHeaderTheme);
+    window.removeEventListener("resize", updateHeaderTheme);
+  };
+}, []);
 
   useEffect(() => {
     // TODO: Replace placeholder review, map and privacy URLs once verified venue data is provided.
@@ -105,9 +129,12 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessStructuredData) }}
       />
-     <header className="mobile-fixed-nav">
-  <a
-    className="brand"
+<header
+  className={`mobile-fixed-nav ${menuOpen ? "is-menu-open" : ""} ${
+    headerOnLight ? "on-light" : "on-dark"
+  }`}
+>
+      className="brand"
     href="#home"
     aria-label="O’BLOCK — на главную"
   >
