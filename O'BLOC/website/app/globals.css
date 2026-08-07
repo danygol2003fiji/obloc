@@ -438,39 +438,182 @@ body{font-family:var(--font-sans)}
 .mobile-fixed-nav{
   display:none;
 }
-
 @media(max-width:700px){
 
   .mobile-fixed-nav{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    z-index:1000;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
 
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 
-    padding:28px 28px 0;
-    pointer-events:none;
+  padding:28px 28px 0;
+  pointer-events:none;
+}
 
+.mobile-fixed-nav .brand,
+.mobile-fixed-nav .menu-button{
+  pointer-events:auto;
+}
+
+/* Старые элементы остаются на своих местах,
+   но на телефоне их не видно */
+.transition-hero > .nav > .brand,
+.transition-hero > .nav > .menu-button{
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.chapter-transition>.transition-hero{
+  position:sticky!important;
+  top:0;
+  z-index:1;
+  transform:none!important;
+  filter:none!important;
+}
+.atmosphere-panel[data-motion="mobile"] .atmosphere-mask{
+  overflow:visible;
+}
+  .atmosphere-panel{
+  border-radius:14px 14px 0 0;
+  box-shadow:0 -16px 42px rgba(12,6,4,.14);
+}
+.atmosphere-touch-light{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+
+  background:
+  radial-gradient(
+    circle 580px at
+    var(--touch-light-x,50%)
+    var(--touch-light-y,50%),
+    rgba(220,150,210,.48) 0%,
+    rgba(220,150,210,.34) 16%,
+    rgba(220,150,210,.20) 32%,
+    rgba(220,150,210,.10) 52%,
+    rgba(220,150,210,.04) 70%,
+    transparent 88%
+  );
+
+  opacity:0;
+ transition:opacity .1s ease;
+}
+
+.atmosphere-panel[data-touch-active="true"] .atmosphere-touch-light{
+  opacity:1;
+}
+
+.atmosphere-intro,
+.atmosphere-cards{
+  position:relative;
+  z-index:3;
+}
+
+.atmosphere-panel[data-motion="mobile"]{
+  opacity:1;
+  transform:none!important;
+  transition:none!important;
+}
+
+.atmosphere-intro{display:block}
+.atmosphere-label{margin:0 0 32px}
+.atmosphere-heading{font-size:clamp(38px,10.7vw,51px);line-height:1.0}
+.atmosphere-copy{margin-top:28px;font-size:14px;line-height:1.72}
+.atmosphere-cards{margin-top:48px}
+
+.atmosphere-panel .mood{
+  filter:none;
+}
+
+.mood-visual{
+  transform:scale(1.04)!important;
+}
+
+/* Текст теперь двигается не по таймеру, а вместе со скроллом */
+.atmosphere-panel[data-motion="mobile"] .atmosphere-label{
+  opacity:var(--label-opacity,0);
+  transform:translate3d(0,var(--label-y,34px),0);
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .atmosphere-line-one{
+  opacity:var(--line-one-opacity,0);
+  transform:translate3d(0,var(--line-one-y,64px),0);
+  filter:blur(var(--line-one-blur,5px));
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .atmosphere-line-two{
+  opacity:var(--line-two-opacity,0);
+  transform:translate3d(0,var(--line-two-y,64px),0);
+  filter:blur(var(--line-two-blur,5px));
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .atmosphere-pink-word{
+  opacity:var(--pink-opacity,0);
+  transform:translate3d(0,var(--pink-y,12px),0);
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .atmosphere-copy{
+  opacity:var(--copy-opacity,0);
+  transform:translate3d(0,var(--copy-y,30px),0);
+  filter:blur(var(--copy-blur,3px));
+  transition:none!important;
+}
+
+.atmosphere-panel[data-motion="mobile"] .mood{
+  opacity:var(--card-opacity,0);
+  transform:
+    translate3d(0,var(--card-y,68px),0)
+    scale(var(--card-scale,1));
+  transition:none!important;
+}
+
+/* Небольшой свет под пальцем */
+.atmosphere-panel .mood-light{
+  display:block;
+  background:
+    radial-gradient(
+      circle 105px at var(--card-light-x,50%) var(--card-light-y,50%),
+      rgba(255,236,248,.20) 0%,
+      rgba(233,155,239,.09) 34%,
+      transparent 72%
+    );
+  opacity:0;
+  transition:opacity .16s ease!important;
+}
+
+.atmosphere-panel .mood:active .mood-light,
+.atmosphere-panel .mood[data-touch-light="true"] .mood-light{
+  opacity:1;
+}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .chapter-transition>.transition-hero,.atmosphere-panel,.atmosphere-panel *{animation:none!important;transition:none!important;transform:none!important;filter:none!important}
+  .atmosphere-panel .mood,.atmosphere-panel .atmosphere-label,.atmosphere-panel .atmosphere-line,.atmosphere-panel .atmosphere-copy,.atmosphere-pink-word{opacity:1!important}
+  .mood-light{display:none!important}
+}
+@media(max-width:700px){
+
+  .mobile-fixed-nav{
     color:#f7f0ea;
-
     transition:
       opacity .22s ease,
       visibility .22s ease,
       color .32s ease;
   }
 
-  .mobile-fixed-nav .brand,
-  .mobile-fixed-nav .menu-button{
-    pointer-events:auto;
-  }
-
   .mobile-fixed-nav .brand{
     color:currentColor!important;
-    transition:color .32s ease;
   }
 
   .mobile-fixed-nav .menu-button{
@@ -480,64 +623,25 @@ body{font-family:var(--font-sans)}
   .mobile-fixed-nav .menu-button i{
     background:currentColor!important;
     border-color:currentColor!important;
-
-    transition:
-      background-color .32s ease,
-      border-color .32s ease;
   }
 
-  /* Главный тёмный экран */
   .mobile-fixed-nav.on-dark{
     color:#f7f0ea;
   }
 
-  /* Светлая Атмосфера */
   .mobile-fixed-nav.on-light{
     color:#281712;
   }
-  /* При открытом меню fixed-шапку прячем,
-     чтобы не было двойного O’BLOCK и крестика */
+
   .mobile-fixed-nav.is-menu-open{
     opacity:0;
     visibility:hidden;
     pointer-events:none;
   }
 
-  /* Старые O’BLOCK и гамбургер внутри hero
-     остаются на месте, но невидимы */
-  .transition-hero > .nav > .brand,
-  .transition-hero > .nav > .menu-button{
-    visibility:hidden;
-    pointer-events:none;
-  }
-
-  .chapter-transition>.transition-hero{
-    position:sticky!important;
-    top:0;
-    z-index:1;
-    transform:none!important;
-    filter:none!important;
-  }
   .hero-foot{
-  width:100%;
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:space-between!important;
-  padding-left:28px!important;
-  padding-right:28px!important;
-}
-
-.hero-foot > *:first-child{
-  margin-left:0!important;
-}
-
-.hero-foot > *:last-child{
-  margin-left:auto!important;
-}
-}
-
-@media(prefers-reduced-motion:reduce){
-  .chapter-transition>.transition-hero,.atmosphere-panel,.atmosphere-panel *{animation:none!important;transition:none!important;transform:none!important;filter:none!important}
-  .atmosphere-panel .mood,.atmosphere-panel .atmosphere-label,.atmosphere-panel .atmosphere-line,.atmosphere-panel .atmosphere-copy,.atmosphere-pink-word{opacity:1!important}
-  .mood-light{display:none!important}
+    width:100%;
+    padding-left:28px!important;
+    padding-right:28px!important;
+  }
 }
