@@ -439,19 +439,23 @@ body{font-family:var(--font-sans)}
 @media(max-width:700px){
 
 .transition-hero > .nav{
+  position:static;
+}
+
+.transition-hero > .nav .brand{
   position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  width:100%;
+  top:28px;
+  left:28px;
   z-index:1000;
-  padding-top:24px;
-  pointer-events:none;
 }
-.transition-hero > .nav .brand,
+
 .transition-hero > .nav .menu-button{
-  pointer-events:auto;
+  position:fixed;
+  top:28px;
+  right:28px;
+  z-index:1000;
 }
+
 .chapter-transition>.transition-hero{
   position:sticky!important;
   top:0;
