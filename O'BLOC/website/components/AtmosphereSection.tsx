@@ -132,6 +132,48 @@ setReveal("line-two", range(progress, 0.47, 0.63), 38, 5);
 });
     visibilityObserver.observe(section);
 
+const updateTouchLight = (clientX: number, clientY: number) => {
+  const rect = section.getBoundingClientRect();
+
+  section.style.setProperty(
+    "--touch-light-x",
+    `${clientX - rect.left}px`
+  );
+
+  section.style.setProperty(
+    "--touch-light-y",
+    `${clientY - rect.top}px`
+  );
+};
+
+const onTouchStart = (event: TouchEvent) => {
+  if (desktop.matches || reduceMotion.matches) return;
+
+  const touch = event.touches[0];
+  if (!touch) return;
+
+  section.dataset.touchActive = "true";
+  updateTouchLight(touch.clientX, touch.clientY);
+};
+
+const onTouchMove = (event: TouchEvent) => {
+  if (desktop.matches || reduceMotion.matches) return;
+
+  const touch = event.touches[0];
+  if (!touch) return;
+
+  updateTouchLight(touch.clientX, touch.clientY);
+};
+
+const onTouchEnd = () => {
+  delete section.dataset.touchActive;
+};
+
+section.addEventListener("touchstart", onTouchStart, { passive: true });
+section.addEventListener("touchmove", onTouchMove, { passive: true });
+section.addEventListener("touchend", onTouchEnd, { passive: true });
+section.addEventListener("touchcancel", onTouchEnd, { passive: true });
+
 const pointerHandlers = cardNodes.map((card, index) => {
   const onMove = (event: PointerEvent) => {
     if (reduceMotion.matches) return;
@@ -195,6 +237,10 @@ const pointerHandlers = cardNodes.map((card, index) => {
       document.removeEventListener("visibilitychange", schedule);
       reduceMotion.removeEventListener("change", configure);
       desktop.removeEventListener("change", configure);
+      section.removeEventListener("touchstart", onTouchStart);
+section.removeEventListener("touchmove", onTouchMove);
+section.removeEventListener("touchend", onTouchEnd);
+section.removeEventListener("touchcancel", onTouchEnd);
       pointerHandlers.forEach(({ card, onDown, onMove, onUp, onLeave }) => {
   card.removeEventListener("pointerdown", onDown);
   card.removeEventListener("pointermove", onMove);
@@ -226,6 +272,8 @@ const pointerHandlers = cardNodes.map((card, index) => {
           </article>
         ))}
       </div>
+
+      <div className="atmosphere-touch-light" aria-hidden="true" />
     </section>
   );
 }

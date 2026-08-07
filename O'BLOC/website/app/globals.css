@@ -451,6 +451,36 @@ body{font-family:var(--font-sans)}
   border-radius:14px 14px 0 0;
   box-shadow:0 -16px 42px rgba(12,6,4,.14);
 }
+.atmosphere-touch-light{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      circle 145px at
+      var(--touch-light-x,50%)
+      var(--touch-light-y,50%),
+      rgba(220,150,210,.16) 0%,
+      rgba(220,150,210,.08) 35%,
+      rgba(220,150,210,.03) 52%,
+      transparent 72%
+    );
+
+  opacity:0;
+  transition:opacity .25s ease;
+}
+
+.atmosphere-panel[data-touch-active="true"] .atmosphere-touch-light{
+  opacity:1;
+}
+
+.atmosphere-intro,
+.atmosphere-cards{
+  position:relative;
+  z-index:3;
+}
 
 .atmosphere-panel[data-motion="mobile"]{
   opacity:1;
