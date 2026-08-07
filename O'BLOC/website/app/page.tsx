@@ -109,6 +109,26 @@ export default function Home() {
   };
 }, []);
 
+useEffect(() => {
+  const menuSection = document.getElementById("menu");
+  if (!menuSection) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        menuSection.dataset.reveal = "true";
+      }
+    },
+    {
+      threshold: 0.22,
+    }
+  );
+
+  observer.observe(menuSection);
+
+  return () => observer.disconnect();
+}, []);
+
   useEffect(() => {
     // TODO: Replace placeholder review, map and privacy URLs once verified venue data is provided.
     // TODO: Replace the placeholder address, phone and social handle with verified venue details.
@@ -153,6 +173,11 @@ export default function Home() {
     <i />
   </button>
 </header>
+        {menuOpen && <div ref={menuDialogRef} className="mobile-menu" role="dialog" aria-modal="true" aria-label="Мобильное меню">
+          <div className="mobile-menu-head"><a className="brand" href="#home" onClick={() => setMenuOpen(false)} aria-label="O’BLOCK — на главную">O’BLOCK</a><button className="menu-close" type="button" aria-label="Закрыть меню" onClick={() => setMenuOpen(false)}><i /><i /></button></div>
+          {["Атмосфера", "Меню", "О нас", "Контакты"].map((item, i) => <a key={item} href={["#experience", "#menu", "#story", "#contacts"][i]} onClick={() => setMenuOpen(false)}>{item}</a>)}
+          <a href="#booking" onClick={() => setMenuOpen(false)}>Забронировать стол</a>
+        </div>}
       <div className="chapter-transition">
       <section className="hero transition-hero" id="home">
         <div className="scene-wrap" aria-hidden="true"><HookahScene /></div>
@@ -169,11 +194,7 @@ export default function Home() {
           <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}><i /><i /></button>
         </header>
 
-        {menuOpen && <div ref={menuDialogRef} className="mobile-menu" role="dialog" aria-modal="true" aria-label="Мобильное меню">
-          <div className="mobile-menu-head"><a className="brand" href="#home" onClick={() => setMenuOpen(false)} aria-label="O’BLOCK — на главную">O’BLOCK</a><button className="menu-close" type="button" aria-label="Закрыть меню" onClick={() => setMenuOpen(false)}><i /><i /></button></div>
-          {["Атмосфера", "Меню", "О нас", "Контакты"].map((item, i) => <a key={item} href={["#experience", "#menu", "#story", "#contacts"][i]} onClick={() => setMenuOpen(false)}>{item}</a>)}
-          <a href="#booking" onClick={() => setMenuOpen(false)}>Забронировать стол</a>
-        </div>}
+
 
         <div className="hero-copy shell">
           <p className="eyebrow">Private lounge <span aria-hidden="true">·</span> since 2026</p>
@@ -191,7 +212,6 @@ export default function Home() {
         </div>
       </section>
       <AtmosphereSection />
-      </div>
 
       <section className="menu-section" id="menu">
         <div className="shell">
@@ -216,6 +236,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </div>
 
       <section className="story" id="story">
         <div className="story-orb"><i /><i /><i /></div>
