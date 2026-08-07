@@ -105,6 +105,27 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessStructuredData) }}
       />
+     <header className="mobile-fixed-nav">
+  <a
+    className="brand"
+    href="#home"
+    aria-label="O’BLOCK — на главную"
+  >
+    O’BLOCK
+  </a>
+
+  <button
+    ref={menuButtonRef}
+    className="menu-button"
+    type="button"
+    onClick={() => setMenuOpen(!menuOpen)}
+    aria-expanded={menuOpen}
+    aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
+  >
+    <i />
+    <i />
+  </button>
+</header>
       <div className="chapter-transition">
       <section className="hero transition-hero" id="home">
         <div className="scene-wrap" aria-hidden="true"><HookahScene /></div>
@@ -118,7 +139,7 @@ export default function Home() {
             <a href="#contacts">Контакты</a>
           </nav>
           <a className="book-link" href="#booking">Забронировать</a>
-          <button ref={menuButtonRef} className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}><i /><i /></button>
+          <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}><i /><i /></button>
         </header>
 
         {menuOpen && <div ref={menuDialogRef} className="mobile-menu" role="dialog" aria-modal="true" aria-label="Мобильное меню">

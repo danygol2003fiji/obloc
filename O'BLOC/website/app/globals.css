@@ -435,21 +435,37 @@ body{font-family:var(--font-sans)}
   .atmosphere-panel .mood:hover .mood-content span{color:#ffc9ff;filter:drop-shadow(0 0 8px rgba(233,155,239,.46))}
   .atmosphere-panel .mood:hover .mood-content h3{transform:translateY(-2px)}
 }
-
+.mobile-fixed-nav{
+  display:none;
+}
 @media(max-width:700px){
 
-.transition-hero > .nav .brand{
+  .mobile-fixed-nav{
   position:fixed;
-  top:28px;
-  left:28px;
+  top:0;
+  left:0;
+  right:0;
   z-index:1000;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:28px 28px 0;
+  pointer-events:none;
 }
 
-.transition-hero > .nav .menu-button{
-  position:fixed;
-  top:28px;
-  right:28px;
-  z-index:1000;
+.mobile-fixed-nav .brand,
+.mobile-fixed-nav .menu-button{
+  pointer-events:auto;
+}
+
+/* Старые элементы остаются на своих местах,
+   но на телефоне их не видно */
+.transition-hero > .nav > .brand,
+.transition-hero > .nav > .menu-button{
+  visibility:hidden;
+  pointer-events:none;
 }
 
 .chapter-transition>.transition-hero{
