@@ -742,4 +742,176 @@ body{font-family:var(--font-sans)}
     scroll-margin-top:84px;
   }
 }
+@media(max-width:700px){
+
+  /* ========================================
+     FIXED MOBILE NAV
+     Контент уезжает ПОД шапку, а не поверх неё
+  ======================================== */
+
+  .mobile-fixed-nav{
+    z-index:6000!important;
+    padding:28px 28px 18px!important;
+    box-sizing:border-box;
+
+    transition:
+      opacity .22s ease,
+      visibility .22s ease,
+      color .32s ease,
+      background .32s ease;
+  }
+
+  .mobile-fixed-nav.on-dark{
+    color:#f7f0ea;
+
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(32,16,12,.98) 0%,
+        rgba(32,16,12,.92) 62%,
+        rgba(32,16,12,0) 100%
+      );
+  }
+
+  .mobile-fixed-nav.on-light{
+    color:#281712;
+
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(239,234,226,.98) 0%,
+        rgba(239,234,226,.92) 62%,
+        rgba(239,234,226,0) 100%
+      );
+  }
+
+
+  /* ========================================
+     MOBILE MENU
+     Меню ВСЕГДА выше Atmosphere и других секций
+  ======================================== */
+
+  body:has(.mobile-menu){
+    overflow:hidden!important;
+  }
+
+  body:has(.mobile-menu) .chapter-transition{
+    position:relative!important;
+    z-index:7000!important;
+  }
+
+  body:has(.mobile-menu) .transition-hero{
+    z-index:7000!important;
+  }
+
+  .mobile-menu{
+    position:fixed!important;
+    inset:0!important;
+    z-index:8000!important;
+
+    width:100vw!important;
+    height:100dvh!important;
+
+    background:#21100c!important;
+    overflow-y:auto!important;
+    isolation:isolate;
+  }
+
+  .mobile-menu::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:-1;
+    background:#21100c;
+  }
+
+  .mobile-menu-head{
+    position:relative;
+    z-index:2;
+  }
+
+  .mobile-fixed-nav.is-menu-open{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+
+
+  /* ========================================
+     HERO FOOTER
+     Возвращаем время строго в левый нижний угол
+  ======================================== */
+
+  .hero-foot{
+    width:100%!important;
+    left:0!important;
+    right:0!important;
+
+    padding-left:28px!important;
+    padding-right:28px!important;
+    margin-left:0!important;
+    margin-right:0!important;
+
+    box-sizing:border-box!important;
+
+    display:flex!important;
+    align-items:flex-end!important;
+    justify-content:space-between!important;
+  }
+
+  .hero-foot > *:first-child{
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+
+  .hero-foot > *:last-child{
+    margin-left:auto!important;
+  }
+
+
+  /* ========================================
+     STACKED SECTIONS
+     Каждый следующий раздел заезжает сверху
+     на предыдущий
+  ======================================== */
+
+  #experience{
+    position:relative;
+    z-index:10;
+  }
+
+  #menu{
+    position:relative;
+    z-index:20;
+    margin-top:-14px;
+  }
+
+  #story{
+    position:relative;
+    z-index:30;
+    margin-top:-14px;
+  }
+
+  #booking{
+    position:relative;
+    z-index:40;
+    margin-top:-14px;
+  }
+
+  #contacts{
+    position:relative;
+    z-index:50;
+    margin-top:-14px;
+  }
+
+  #menu,
+  #story,
+  #booking,
+  #contacts{
+    border-radius:14px 14px 0 0;
+    box-shadow:0 -18px 46px rgba(20,10,7,.16);
+    overflow:hidden;
+  }
+
+}
 }
