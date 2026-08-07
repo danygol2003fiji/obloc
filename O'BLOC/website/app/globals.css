@@ -459,18 +459,19 @@ body{font-family:var(--font-sans)}
 
   background:
   radial-gradient(
-    circle 290px at
+    circle 580px at
     var(--touch-light-x,50%)
     var(--touch-light-y,50%),
-    rgba(220,150,210,.28) 0%,
-    rgba(220,150,210,.16) 22%,
-    rgba(220,150,210,.08) 45%,
-    rgba(220,150,210,.03) 62%,
-    transparent 82%
+    rgba(220,150,210,.48) 0%,
+    rgba(220,150,210,.34) 16%,
+    rgba(220,150,210,.20) 32%,
+    rgba(220,150,210,.10) 52%,
+    rgba(220,150,210,.04) 70%,
+    transparent 88%
   );
 
   opacity:0;
- transition:opacity .16s ease;
+ transition:opacity .1s ease;
 }
 
 .atmosphere-panel[data-touch-active="true"] .atmosphere-touch-light{
