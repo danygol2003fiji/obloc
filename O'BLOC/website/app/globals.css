@@ -444,6 +444,9 @@ body{font-family:var(--font-sans)}
   transform:none!important;
   filter:none!important;
 }
+.atmosphere-panel[data-motion="mobile"] .atmosphere-mask{
+  overflow:visible;
+}
   .atmosphere-panel{
   border-radius:14px 14px 0 0;
   box-shadow:0 -16px 42px rgba(12,6,4,.14);
@@ -457,7 +460,7 @@ body{font-family:var(--font-sans)}
 
 .atmosphere-intro{display:block}
 .atmosphere-label{margin:0 0 32px}
-.atmosphere-heading{font-size:clamp(38px,10.7vw,51px);line-height:1.01}
+.atmosphere-heading{font-size:clamp(38px,10.7vw,51px);line-height:1.0}
 .atmosphere-copy{margin-top:28px;font-size:14px;line-height:1.72}
 .atmosphere-cards{margin-top:48px}
 

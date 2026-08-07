@@ -63,8 +63,8 @@ const eased = progress * progress * (3 - 2 * progress);
       hero?.style.setProperty("--hero-exit-brightness", (1 - eased * 0.08).toFixed(4));
 
       setReveal("label", range(progress, 0.3, 0.42), 24);
-      setReveal("line-one", range(progress, 0.39, 0.55), 64, 5);
-      setReveal("line-two", range(progress, 0.47, 0.63), 64, 5);
+setReveal("line-one", range(progress, 0.39, 0.55), 38, 5);
+setReveal("line-two", range(progress, 0.47, 0.63), 38, 5);
       setReveal("pink", range(progress, 0.57, 0.7), 12);
       setReveal("copy", range(progress, 0.54, 0.7), 30, 3);
 
