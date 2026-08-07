@@ -438,10 +438,6 @@ body{font-family:var(--font-sans)}
 
 @media(max-width:700px){
 
-.transition-hero > .nav{
-  position:static;
-}
-
 .transition-hero > .nav .brand{
   position:fixed;
   top:28px;
