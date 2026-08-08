@@ -122,6 +122,88 @@ export default function Home() {
     });
     return () => placeholders.forEach((link) => link.removeEventListener("click", preventPlaceholderNavigation));
   }, []);
+  useEffect(() => {
+  const atmosphere = document.getElementById("experience");
+  const atmosphereParent = atmosphere?.parentElement;
+  const zone = document.querySelector<HTMLElement>(".menu-transition-zone");
+  const menuSection = document.getElementById("menu");
+
+  if (!atmosphere || !zone || !menuSection) return;
+
+  let frame = 0;
+
+  const update = () => {
+    frame = 0;
+
+    if (window.innerWidth > 700) {
+      atmosphere.removeAttribute("data-transition-pin");
+      atmosphere.style.removeProperty("--transition-top");
+      if (atmosphereParent) {
+  atmosphereParent.style.removeProperty("padding-bottom");
+}
+      menuSection.style.removeProperty("--menu-progress");
+      menuSection.style.removeProperty("--menu-offset");
+      return;
+    }
+
+    const viewport = window.innerHeight;
+    const zoneRect = zone.getBoundingClientRect();
+
+    const progress = Math.max(
+      0,
+      Math.min(1, (viewport - zoneRect.top) / viewport)
+    );
+
+    menuSection.style.setProperty("--menu-progress", String(progress));
+    menuSection.style.setProperty(
+  "--menu-offset",
+  `${(1 - progress) * 100}dvh`
+);
+
+    if (progress > 0 && progress < 1) {
+      const atmosphereHeight = atmosphere.offsetHeight;
+if (atmosphereParent) {
+  atmosphereParent.style.paddingBottom = `${atmosphereHeight}px`;
+}
+      atmosphere.setAttribute("data-transition-pin", "true");
+      atmosphere.style.setProperty(
+        "--transition-top",
+        `${viewport - atmosphereHeight}px`
+      );
+    } else {
+      atmosphere.removeAttribute("data-transition-pin");
+      atmosphere.style.removeProperty("--transition-top");
+      if (atmosphereParent) {
+  atmosphereParent.style.removeProperty("padding-bottom");
+}
+    }
+  };
+
+  const schedule = () => {
+    if (frame) return;
+    frame = requestAnimationFrame(update);
+  };
+
+  update();
+
+  window.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("resize", schedule);
+
+  return () => {
+    window.removeEventListener("scroll", schedule);
+    window.removeEventListener("resize", schedule);
+
+    if (frame) cancelAnimationFrame(frame);
+
+    atmosphere.removeAttribute("data-transition-pin");
+    atmosphere.style.removeProperty("--transition-top");
+    if (atmosphereParent) {
+  atmosphereParent.style.removeProperty("padding-bottom");
+}
+    menuSection.style.removeProperty("--menu-progress");
+    menuSection.style.removeProperty("--menu-offset");
+  };
+}, []);
 
   return (
     <main>
