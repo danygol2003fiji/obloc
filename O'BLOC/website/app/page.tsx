@@ -191,6 +191,7 @@ export default function Home() {
         </div>
       </section>
       <AtmosphereSection />
+      </div>
 
 <div className="menu-transition-zone">
   <div className="menu-transition-pin" aria-hidden="true" />
