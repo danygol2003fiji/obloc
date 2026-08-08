@@ -1191,3 +1191,39 @@ body{font-family:var(--font-sans)}
     transform:translate3d(0,6vh,0)!important;
   }
 }
+@media(max-width:700px){
+
+  .mobile-fixed-brand{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:7px;
+  }
+
+  .mobile-fixed-label{
+    display:block;
+
+    font-family:var(--font-sans);
+    font-size:10px;
+    font-weight:500;
+    line-height:1;
+    letter-spacing:.22em;
+
+    color:#ee99eb;
+
+    text-transform:uppercase;
+
+    transition:
+      color .28s ease,
+      opacity .28s ease,
+      transform .28s ease;
+  }
+
+  .mobile-fixed-nav.on-light .mobile-fixed-label{
+    color:#9c4f8f;
+  }
+
+  .mobile-fixed-nav.on-dark .mobile-fixed-label{
+    color:#ee99eb;
+  }
+}
