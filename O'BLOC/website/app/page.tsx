@@ -110,19 +110,6 @@ export default function Home() {
 }, []);
 
   useEffect(() => {
-    // TODO: Replace placeholder review, map and privacy URLs once verified venue data is provided.
-    // TODO: Replace the placeholder address, phone and social handle with verified venue details.
-    const placeholders = document.querySelectorAll<HTMLAnchorElement>('a[href="#"]');
-    const preventPlaceholderNavigation = (event: Event) => event.preventDefault();
-    placeholders.forEach((link) => {
-      link.setAttribute("aria-disabled", "true");
-      link.setAttribute("data-placeholder-link", "true");
-      link.setAttribute("title", "Ссылка будет добавлена после уточнения данных");
-      link.addEventListener("click", preventPlaceholderNavigation);
-    });
-    return () => placeholders.forEach((link) => link.removeEventListener("click", preventPlaceholderNavigation));
-  }, []);
-   useEffect(() => {
   const clamp = (value: number) =>
     Math.max(0, Math.min(1, value));
 
@@ -132,161 +119,108 @@ export default function Home() {
     end: number
   ) => clamp((progress - start) / (end - start));
 
-  const pairs = [
-    ["experience", "menu"],
-    ["menu", "story"],
-    ["story", "booking"],
-    ["booking", "contacts"],
-  ] as const;
+  const ids = [
+    "experience",
+    "menu",
+    "story",
+    "booking",
+    "reviews",
+    "contacts",
+  ];
 
-  const transitions = pairs.flatMap(([fromId, toId], index) => {
-    const from = document.getElementById(fromId);
-    const to = document.getElementById(toId);
-
-    if (!from || !to || !to.parentElement) return [];
-
-    const sentinel = document.createElement("div");
-    sentinel.className = "mobile-section-sentinel";
-    sentinel.setAttribute("aria-hidden", "true");
-
-    to.parentElement.insertBefore(sentinel, to);
-
-    const placeholder = document.createElement("div");
-    placeholder.className = "mobile-section-placeholder";
-    placeholder.setAttribute("aria-hidden", "true");
-
-    return [{
-      from,
-      to,
-      sentinel,
-      placeholder,
-      index,
-      pinned: false,
-    }];
-  });
+  const sections = ids
+    .map((id) => document.getElementById(id))
+    .filter((section): section is HTMLElement => Boolean(section));
 
   let frame = 0;
 
-  const unpin = (item: (typeof transitions)[number]) => {
-    if (!item.pinned) return;
-
-    item.from.removeAttribute("data-stack-pinned");
-    item.from.style.removeProperty("--stack-top");
-    item.from.style.removeProperty("--stack-z");
-
-    item.placeholder.remove();
-    item.pinned = false;
-  };
-
-  const pin = (item: (typeof transitions)[number]) => {
-    if (item.pinned) return;
-
-    const height = item.from.offsetHeight;
-
-    item.placeholder.style.height = `${height}px`;
-
-    item.from.parentElement?.insertBefore(
-      item.placeholder,
-      item.from
-    );
-
-    item.from.setAttribute("data-stack-pinned", "true");
-
-    item.from.style.setProperty(
-      "--stack-top",
-      `${window.innerHeight - height}px`
-    );
-
-    item.from.style.setProperty(
-      "--stack-z",
-      String(20 + item.index * 20)
-    );
-
-    item.to.style.setProperty(
-      "--stack-z",
-      String(30 + item.index * 20)
-    );
-
-    item.pinned = true;
-  };
-
   const setReveal = (
-    element: HTMLElement,
+    section: HTMLElement,
     name: string,
     value: number,
     distance: number,
     blur: number
   ) => {
-    element.style.setProperty(
+    section.style.setProperty(
       `--${name}-opacity`,
       String(value)
     );
 
-    element.style.setProperty(
+    section.style.setProperty(
       `--${name}-y`,
       `${(1 - value) * distance}px`
     );
 
-    element.style.setProperty(
+    section.style.setProperty(
       `--${name}-blur`,
       `${(1 - value) * blur}px`
     );
+  };
+
+  const clear = () => {
+    sections.forEach((section) => {
+      section.style.removeProperty("--stack-top");
+      section.style.removeProperty("--stack-z");
+
+      ["reveal-a", "reveal-b", "reveal-c"].forEach((name) => {
+        section.style.removeProperty(`--${name}-opacity`);
+        section.style.removeProperty(`--${name}-y`);
+        section.style.removeProperty(`--${name}-blur`);
+      });
+    });
   };
 
   const update = () => {
     frame = 0;
 
     if (window.innerWidth > 700) {
-      transitions.forEach((item) => {
-        unpin(item);
-
-        item.to.style.removeProperty("--section-offset");
-        item.to.style.removeProperty("--stack-z");
-      });
-
+      clear();
       return;
     }
 
     const viewport = window.innerHeight;
 
-    transitions.forEach((item) => {
-      const rect = item.sentinel.getBoundingClientRect();
+    sections.forEach((section, index) => {
+      const height = section.offsetHeight;
 
       /*
-       * Переход начинается ещё у нижнего края экрана.
-       * Поэтому первый свайп сразу двигает новый раздел.
+       * Высокая секция прокручивается обычно.
+       * Когда её низ доходит до низа экрана —
+       * последний кадр остаётся sticky.
        */
-      const start = viewport * 1.06;
-      const end = viewport * 0.18;
+      section.style.setProperty(
+        "--stack-top",
+        `${Math.min(0, viewport - height)}px`
+      );
 
+      section.style.setProperty(
+        "--stack-z",
+        String(10 + index * 10)
+      );
+
+      /*
+       * Atmosphere уже имеет свою красивую
+       * scroll-анимацию — её не трогаем.
+       */
+      if (section.id === "experience") return;
+
+      const rect = section.getBoundingClientRect();
+
+      /*
+       * Reveal начинает работать сразу,
+       * как новая секция входит снизу.
+       */
       const progress = clamp(
-        (start - rect.top) / (start - end)
+        (viewport - rect.top) / (viewport * 0.82)
       );
 
-      /*
-       * Сам раздел едет напрямую за scroll.
-       */
-      item.to.style.setProperty(
-        "--section-offset",
-        `${(1 - progress) * 92}dvh`
-      );
+      const revealA = range(progress, 0.05, 0.36);
+      const revealB = range(progress, 0.18, 0.56);
+      const revealC = range(progress, 0.38, 0.78);
 
-      /*
-       * Три последовательные стадии появления контента.
-       */
-      const revealA = range(progress, 0.12, 0.48);
-      const revealB = range(progress, 0.28, 0.68);
-      const revealC = range(progress, 0.48, 0.88);
-
-      setReveal(item.to, "reveal-a", revealA, 28, 5);
-      setReveal(item.to, "reveal-b", revealB, 36, 4);
-      setReveal(item.to, "reveal-c", revealC, 30, 3);
-
-      if (progress > 0 && progress < 1) {
-        pin(item);
-      } else {
-        unpin(item);
-      }
+      setReveal(section, "reveal-a", revealA, 32, 5);
+      setReveal(section, "reveal-b", revealB, 38, 5);
+      setReveal(section, "reveal-c", revealC, 30, 3);
     });
   };
 
@@ -309,25 +243,7 @@ export default function Home() {
 
     if (frame) cancelAnimationFrame(frame);
 
-    transitions.forEach((item) => {
-      unpin(item);
-
-      item.sentinel.remove();
-      item.placeholder.remove();
-
-      item.to.style.removeProperty("--section-offset");
-      item.to.style.removeProperty("--stack-z");
-
-      [
-        "reveal-a",
-        "reveal-b",
-        "reveal-c",
-      ].forEach((name) => {
-        item.to.style.removeProperty(`--${name}-opacity`);
-        item.to.style.removeProperty(`--${name}-y`);
-        item.to.style.removeProperty(`--${name}-blur`);
-      });
-    });
+    clear();
   };
 }, []);
    return (
@@ -398,9 +314,7 @@ export default function Home() {
         </div>
       </section>
       <AtmosphereSection />
-      </div>
-
-<section className="menu-section" id="menu">
+ <section className="menu-section" id="menu">
         <div className="shell">
           <div className="section-head">
             <div><p className="section-index">02 · Меню</p><h2>Вкусы, которые<br /><em>остаются.</em></h2></div>
@@ -449,7 +363,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="reviews">
+      <section className="reviews" id="reviews">
         <div className="shell reviews-inner"><div><p className="section-index">Говорят гости</p><blockquote>«В O’BLOCK приходишь за вкусом, а остаёшься из-за ощущения, что ты именно там, где должен быть».</blockquote></div><div className="rating"><strong>4,9</strong><div>★★★★★<span>327 отзывов</span></div></div></div>
         <div className="shell review-links"><a href="#" aria-label="Отзывы O’BLOCK на Яндекс Картах"><b>Я</b><span>Яндекс Карты<small>Читать отзывы ↗</small></span></a><a href="#" aria-label="Отзывы O’BLOCK в 2ГИС"><b>2</b><span>2ГИС<small>Читать отзывы ↗</small></span></a></div>
       </section>
@@ -458,6 +372,11 @@ export default function Home() {
         <div className="shell footer-top"><div className="footer-brand">O’BLOCK<small>Private lounge</small></div><div><small>Адрес</small><p>{VENUE_ADDRESS}</p><a href={mapUrl} target="_blank" rel="noreferrer" aria-label={`Открыть адрес O’BLOCK: ${VENUE_ADDRESS} на карте`}>Построить маршрут ↗</a></div><div><small>Связаться</small><p>+7 (900) 000-00-00</p><p>@oblock_lounge</p></div><div><small>Режим работы</small><p>Вс–Чт · {weeklySchedule.sunday.open}–{weeklySchedule.sunday.close}</p><p>Пт–Сб · {weeklySchedule.friday.open}–{weeklySchedule.friday.close}</p></div></div>
         <div className="shell footer-bottom"><span>© 2026 O’BLOCK</span><span>18+ · Курение вредит вашему здоровью</span><a href="#">Политика конфиденциальности</a></div>
       </footer>
+      </footer>
+
+</div>
+
+</main>
     </main>
   );
 }
