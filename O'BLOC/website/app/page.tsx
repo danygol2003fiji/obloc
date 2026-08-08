@@ -50,7 +50,8 @@ const drinks = [
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerOnLight, setHeaderOnLight] = useState(false);
-  const menuDialogRef = useRef<HTMLDivElement>(null);
+  const [headerLabel, setHeaderLabel] = useState("PRIVATE LOUNGE · SINCE 2026");
+   const menuDialogRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -106,6 +107,47 @@ export default function Home() {
   return () => {
     window.removeEventListener("scroll", updateHeaderTheme);
     window.removeEventListener("resize", updateHeaderTheme);
+  };
+}, []);
+useEffect(() => {
+  const sections = [
+    { id: "home", label: "PRIVATE LOUNGE · SINCE 2026" },
+    { id: "experience", label: "01 · АТМОСФЕРА" },
+    { id: "menu", label: "02 · МЕНЮ" },
+    { id: "story", label: "03 · ИСТОРИЯ" },
+    { id: "booking", label: "04 · БРОНИРОВАНИЕ" },
+    { id: "reviews", label: "05 · ГОСТИ" },
+    { id: "contacts", label: "06 · КОНТАКТЫ" },
+  ];
+
+  const updateHeaderLabel = () => {
+    const markerY = 110;
+
+    let currentLabel = sections[0].label;
+
+    for (const section of sections) {
+      const element = document.getElementById(section.id);
+      if (!element) continue;
+
+      const rect = element.getBoundingClientRect();
+
+      if (rect.top <= markerY && rect.bottom > markerY) {
+        currentLabel = section.label;
+        break;
+      }
+    }
+
+    setHeaderLabel(currentLabel);
+  };
+
+  updateHeaderLabel();
+
+  window.addEventListener("scroll", updateHeaderLabel, { passive: true });
+  window.addEventListener("resize", updateHeaderLabel);
+
+  return () => {
+    window.removeEventListener("scroll", updateHeaderLabel);
+    window.removeEventListener("resize", updateHeaderLabel);
   };
 }, []);
 
@@ -280,6 +322,7 @@ const goToSection = (id: string) => {
     headerOnLight ? "on-light" : "on-dark"
   }`}
 >
+  <div className="mobile-fixed-brand">
   <a
     className="brand"
     href="#home"
@@ -287,6 +330,11 @@ const goToSection = (id: string) => {
   >
     O’BLOCK
   </a>
+
+  <span className="mobile-fixed-label">
+    {headerLabel}
+  </span>
+</div>
   <button
     ref={menuButtonRef}
     className="menu-button"
