@@ -150,9 +150,12 @@ export default function Home() {
     const zoneRect = zone.getBoundingClientRect();
 
     const progress = Math.max(
-      0,
-      Math.min(1, (viewport - zoneRect.top) / viewport)
-    );
+  0,
+  Math.min(
+    1,
+    (viewport * 1.08 - zoneRect.top) / (viewport * 0.65)
+  )
+);
 
     menuSection.style.setProperty("--menu-progress", String(progress));
     menuSection.style.setProperty(
