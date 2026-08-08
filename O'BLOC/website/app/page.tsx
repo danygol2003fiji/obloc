@@ -133,8 +133,7 @@ useEffect(() => {
 
       if (rect.top <= markerY && rect.bottom > markerY) {
         currentLabel = section.label;
-        break;
-      }
+       }
     }
 
     setHeaderLabel(currentLabel);
