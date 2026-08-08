@@ -1256,3 +1256,32 @@ body{font-family:var(--font-sans)}
     min-height:100%;
   }
 }
+@media(max-width:700px){
+
+  .mobile-fixed-nav{
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  .mobile-fixed-nav.on-dark{
+    color:#f7f0ea!important;
+  }
+
+  .mobile-fixed-nav.on-light{
+    color:#281712!important;
+  }
+
+  .mobile-fixed-nav .brand{
+    color:currentColor!important;
+  }
+
+  .mobile-fixed-nav .menu-button i{
+    background:currentColor!important;
+    border-color:currentColor!important;
+  }
+
+  html,
+  body{
+    min-height:100%;
+  }
+}
