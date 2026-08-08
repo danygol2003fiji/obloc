@@ -122,64 +122,172 @@ export default function Home() {
     });
     return () => placeholders.forEach((link) => link.removeEventListener("click", preventPlaceholderNavigation));
   }, []);
-  useEffect(() => {
-  const atmosphere = document.getElementById("experience");
-  const atmosphereParent = atmosphere?.parentElement;
-  const zone = document.querySelector<HTMLElement>(".menu-transition-zone");
-  const menuSection = document.getElementById("menu");
+   useEffect(() => {
+  const clamp = (value: number) =>
+    Math.max(0, Math.min(1, value));
 
-  if (!atmosphere || !zone || !menuSection) return;
+  const range = (
+    progress: number,
+    start: number,
+    end: number
+  ) => clamp((progress - start) / (end - start));
+
+  const pairs = [
+    ["experience", "menu"],
+    ["menu", "story"],
+    ["story", "booking"],
+    ["booking", "contacts"],
+  ] as const;
+
+  const transitions = pairs.flatMap(([fromId, toId], index) => {
+    const from = document.getElementById(fromId);
+    const to = document.getElementById(toId);
+
+    if (!from || !to || !to.parentElement) return [];
+
+    const sentinel = document.createElement("div");
+    sentinel.className = "mobile-section-sentinel";
+    sentinel.setAttribute("aria-hidden", "true");
+
+    to.parentElement.insertBefore(sentinel, to);
+
+    const placeholder = document.createElement("div");
+    placeholder.className = "mobile-section-placeholder";
+    placeholder.setAttribute("aria-hidden", "true");
+
+    return [{
+      from,
+      to,
+      sentinel,
+      placeholder,
+      index,
+      pinned: false,
+    }];
+  });
 
   let frame = 0;
+
+  const unpin = (item: (typeof transitions)[number]) => {
+    if (!item.pinned) return;
+
+    item.from.removeAttribute("data-stack-pinned");
+    item.from.style.removeProperty("--stack-top");
+    item.from.style.removeProperty("--stack-z");
+
+    item.placeholder.remove();
+    item.pinned = false;
+  };
+
+  const pin = (item: (typeof transitions)[number]) => {
+    if (item.pinned) return;
+
+    const height = item.from.offsetHeight;
+
+    item.placeholder.style.height = `${height}px`;
+
+    item.from.parentElement?.insertBefore(
+      item.placeholder,
+      item.from
+    );
+
+    item.from.setAttribute("data-stack-pinned", "true");
+
+    item.from.style.setProperty(
+      "--stack-top",
+      `${window.innerHeight - height}px`
+    );
+
+    item.from.style.setProperty(
+      "--stack-z",
+      String(20 + item.index * 20)
+    );
+
+    item.to.style.setProperty(
+      "--stack-z",
+      String(30 + item.index * 20)
+    );
+
+    item.pinned = true;
+  };
+
+  const setReveal = (
+    element: HTMLElement,
+    name: string,
+    value: number,
+    distance: number,
+    blur: number
+  ) => {
+    element.style.setProperty(
+      `--${name}-opacity`,
+      String(value)
+    );
+
+    element.style.setProperty(
+      `--${name}-y`,
+      `${(1 - value) * distance}px`
+    );
+
+    element.style.setProperty(
+      `--${name}-blur`,
+      `${(1 - value) * blur}px`
+    );
+  };
 
   const update = () => {
     frame = 0;
 
     if (window.innerWidth > 700) {
-      atmosphere.removeAttribute("data-transition-pin");
-      atmosphere.style.removeProperty("--transition-top");
-      if (atmosphereParent) {
-  atmosphereParent.style.removeProperty("padding-bottom");
-}
-      menuSection.style.removeProperty("--menu-progress");
-      menuSection.style.removeProperty("--menu-offset");
+      transitions.forEach((item) => {
+        unpin(item);
+
+        item.to.style.removeProperty("--section-offset");
+        item.to.style.removeProperty("--stack-z");
+      });
+
       return;
     }
 
     const viewport = window.innerHeight;
-    const zoneRect = zone.getBoundingClientRect();
 
-    const progress = Math.max(
-  0,
-  Math.min(
-    1,
-    (viewport * 1.08 - zoneRect.top) / (viewport * 0.65)
-  )
-);
+    transitions.forEach((item) => {
+      const rect = item.sentinel.getBoundingClientRect();
 
-    menuSection.style.setProperty("--menu-progress", String(progress));
-    menuSection.style.setProperty(
-  "--menu-offset",
-  `${(1 - progress) * 100}dvh`
-);
+      /*
+       * Переход начинается ещё у нижнего края экрана.
+       * Поэтому первый свайп сразу двигает новый раздел.
+       */
+      const start = viewport * 1.06;
+      const end = viewport * 0.18;
 
-    if (progress > 0 && progress < 1) {
-      const atmosphereHeight = atmosphere.offsetHeight;
-if (atmosphereParent) {
-  atmosphereParent.style.paddingBottom = `${atmosphereHeight}px`;
-}
-      atmosphere.setAttribute("data-transition-pin", "true");
-      atmosphere.style.setProperty(
-        "--transition-top",
-        `${viewport - atmosphereHeight}px`
+      const progress = clamp(
+        (start - rect.top) / (start - end)
       );
-    } else {
-      atmosphere.removeAttribute("data-transition-pin");
-      atmosphere.style.removeProperty("--transition-top");
-      if (atmosphereParent) {
-  atmosphereParent.style.removeProperty("padding-bottom");
-}
-    }
+
+      /*
+       * Сам раздел едет напрямую за scroll.
+       */
+      item.to.style.setProperty(
+        "--section-offset",
+        `${(1 - progress) * 92}dvh`
+      );
+
+      /*
+       * Три последовательные стадии появления контента.
+       */
+      const revealA = range(progress, 0.12, 0.48);
+      const revealB = range(progress, 0.28, 0.68);
+      const revealC = range(progress, 0.48, 0.88);
+
+      setReveal(item.to, "reveal-a", revealA, 28, 5);
+      setReveal(item.to, "reveal-b", revealB, 36, 4);
+      setReveal(item.to, "reveal-c", revealC, 30, 3);
+
+      if (progress > 0 && progress < 1) {
+        pin(item);
+      } else {
+        unpin(item);
+      }
+    });
   };
 
   const schedule = () => {
@@ -189,7 +297,10 @@ if (atmosphereParent) {
 
   update();
 
-  window.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("scroll", schedule, {
+    passive: true,
+  });
+
   window.addEventListener("resize", schedule);
 
   return () => {
@@ -198,17 +309,28 @@ if (atmosphereParent) {
 
     if (frame) cancelAnimationFrame(frame);
 
-    atmosphere.removeAttribute("data-transition-pin");
-    atmosphere.style.removeProperty("--transition-top");
-    if (atmosphereParent) {
-  atmosphereParent.style.removeProperty("padding-bottom");
-}
-    menuSection.style.removeProperty("--menu-progress");
-    menuSection.style.removeProperty("--menu-offset");
+    transitions.forEach((item) => {
+      unpin(item);
+
+      item.sentinel.remove();
+      item.placeholder.remove();
+
+      item.to.style.removeProperty("--section-offset");
+      item.to.style.removeProperty("--stack-z");
+
+      [
+        "reveal-a",
+        "reveal-b",
+        "reveal-c",
+      ].forEach((name) => {
+        item.to.style.removeProperty(`--${name}-opacity`);
+        item.to.style.removeProperty(`--${name}-y`);
+        item.to.style.removeProperty(`--${name}-blur`);
+      });
+    });
   };
 }, []);
-
-  return (
+   return (
     <main>
       <script
         type="application/ld+json"
@@ -277,10 +399,6 @@ if (atmosphereParent) {
       </section>
       <AtmosphereSection />
       </div>
-
-<div className="menu-transition-zone">
-  <div className="menu-transition-pin" aria-hidden="true" />
-</div>
 
 <section className="menu-section" id="menu">
         <div className="shell">
