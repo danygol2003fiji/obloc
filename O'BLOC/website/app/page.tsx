@@ -246,6 +246,29 @@ export default function Home() {
     clear();
   };
 }, []);
+const goToSection = (id: string) => {
+  const target = document.getElementById(id);
+  if (!target) return;
+
+  let top = 0;
+  let node: HTMLElement | null = target;
+
+  while (node) {
+    top += node.offsetTop;
+    node = node.offsetParent as HTMLElement | null;
+  }
+
+  setMenuOpen(false);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: Math.max(0, top - 12),
+        behavior: "smooth",
+      });
+    });
+  });
+};
    return (
     <main>
       <script
@@ -292,11 +315,65 @@ export default function Home() {
           <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}><i /><i /></button>
         </header>
 
-        {menuOpen && <div ref={menuDialogRef} className="mobile-menu" role="dialog" aria-modal="true" aria-label="Мобильное меню">
-          <div className="mobile-menu-head"><a className="brand" href="#home" onClick={() => setMenuOpen(false)} aria-label="O’BLOCK — на главную">O’BLOCK</a><button className="menu-close" type="button" aria-label="Закрыть меню" onClick={() => setMenuOpen(false)}><i /><i /></button></div>
-          {["Атмосфера", "Меню", "О нас", "Контакты"].map((item, i) => <a key={item} href={["#experience", "#menu", "#story", "#contacts"][i]} onClick={() => setMenuOpen(false)}>{item}</a>)}
-          <a href="#booking" onClick={() => setMenuOpen(false)}>Забронировать стол</a>
-        </div>}
+        {menuOpen && (
+  <div
+    ref={menuDialogRef}
+    className="mobile-menu"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Мобильное меню"
+  >
+    <div className="mobile-menu-head">
+      <div className="mobile-menu-brand">
+        <button
+          className="mobile-menu-home"
+          type="button"
+          onClick={() => goToSection("home")}
+        >
+          O’BLOCK
+        </button>
+
+        <span>LOUNGE BAR</span>
+      </div>
+
+      <button
+        className="menu-close"
+        type="button"
+        aria-label="Закрыть меню"
+        onClick={() => setMenuOpen(false)}
+      >
+        <i />
+        <i />
+      </button>
+    </div>
+
+    <nav className="mobile-menu-links" aria-label="Разделы сайта">
+      <button type="button" onClick={() => goToSection("experience")}>
+        Атмосфера
+      </button>
+
+      <button type="button" onClick={() => goToSection("menu")}>
+        Меню
+      </button>
+
+      <button type="button" onClick={() => goToSection("story")}>
+        О нас
+      </button>
+
+      <button type="button" onClick={() => goToSection("contacts")}>
+        Контакты
+      </button>
+
+      <button
+        className="mobile-menu-book"
+        type="button"
+        onClick={() => goToSection("booking")}
+      >
+        Забронировать стол
+      </button>
+    </nav>
+  </div>
+)}
 
         <div className="hero-copy shell">
           <p className="eyebrow">Private lounge <span aria-hidden="true">·</span> since 2026</p>
