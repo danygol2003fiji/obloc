@@ -55,53 +55,56 @@ export default function Home() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    if (!menuOpen) return () => { document.body.style.overflow = ""; };
-
-    const dialog = menuDialogRef.current;
-    const focusable = dialog?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
-    focusable?.[0]?.focus();
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setMenuOpen(false);
-        return;
-      }
-      if (event.key !== "Tab" || !focusable?.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.body.style.overflow = "";
-      document.removeEventListener("keydown", onKeyDown);
-      menuButtonRef.current?.focus();
-    };
-  }, [menuOpen]);
-   useEffect(() => {
-  const atmosphere = document.getElementById("experience");
-  if (!atmosphere) return;
+  const sections = [
+  { id: "home", light: false, color: "#21100c" },
+  { id: "experience", light: true, color: "#f2eee8" },
+  { id: "menu", light: false, color: "#2a140e" },
+  { id: "story", light: false, color: "#1b0c0a" },
+  { id: "booking", light: true, color: "#f2eee8" },
+  { id: "reviews", light: false, color: "#24110c" },
+  { id: "contacts", light: false, color: "#160806" },
+];
 
   const updateHeaderTheme = () => {
-    const rect = atmosphere.getBoundingClientRect();
+    const markerY = 110;
 
-    setHeaderOnLight(
-      rect.top <= 95 &&
-      rect.bottom > 95
+    let active = sections[0];
+
+    for (const section of sections) {
+      const element = document.getElementById(section.id);
+      if (!element) continue;
+
+      const rect = element.getBoundingClientRect();
+
+      if (rect.top <= markerY && rect.bottom > markerY) {
+        active = section;
+      }
+    }
+
+    setHeaderOnLight(active.light);
+
+    document.documentElement.style.backgroundColor = active.color;
+    document.body.style.backgroundColor = active.color;
+
+    let themeMeta = document.querySelector<HTMLMetaElement>(
+      'meta[name="theme-color"]'
     );
+
+    if (!themeMeta) {
+      themeMeta = document.createElement("meta");
+      themeMeta.name = "theme-color";
+      document.head.appendChild(themeMeta);
+    }
+
+    themeMeta.content = active.color;
   };
 
   updateHeaderTheme();
 
-  window.addEventListener("scroll", updateHeaderTheme, { passive: true });
+  window.addEventListener("scroll", updateHeaderTheme, {
+    passive: true,
+  });
+
   window.addEventListener("resize", updateHeaderTheme);
 
   return () => {
@@ -109,7 +112,7 @@ export default function Home() {
     window.removeEventListener("resize", updateHeaderTheme);
   };
 }, []);
-useEffect(() => {
+ useEffect(() => {
   const sections = [
     { id: "home", label: "PRIVATE LOUNGE · SINCE 2026" },
     { id: "experience", label: "01 · АТМОСФЕРА" },
@@ -423,8 +426,7 @@ const goToSection = (id: string) => {
 )}
 
         <div className="hero-copy shell">
-          <p className="eyebrow">Private lounge <span aria-hidden="true">·</span> since 2026</p>
-          <h1>Искусство<br />замедлять <em>время.</em></h1>
+           <h1>Искусство<br />замедлять <em>время.</em></h1>
           <p className="hero-intro">Авторские паровые коктейли, камерная музыка и атмосфера, в которой вечер становится личной историей.</p>
           <div className="hero-actions">
             <a className="button primary" href="#booking">Забронировать стол <b>↗</b></a>
