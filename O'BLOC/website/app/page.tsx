@@ -211,6 +211,8 @@ export default function Home() {
         section.style.removeProperty(`--${name}-y`);
         section.style.removeProperty(`--${name}-blur`);
       });
+      section.style.removeProperty("--section-exit-opacity");
+section.style.removeProperty("--section-exit-blur");
     });
   };
 
@@ -246,9 +248,24 @@ export default function Home() {
        * Atmosphere уже имеет свою красивую
        * scroll-анимацию — её не трогаем.
        */
-      if (section.id === "experience") return;
+       const rect = section.getBoundingClientRect();
+      const fadeStart = 180;
+const fadeEnd = 105;
 
-      const rect = section.getBoundingClientRect();
+const exitProgress = clamp(
+  (fadeStart - rect.top) / (fadeStart - fadeEnd)
+);
+
+section.style.setProperty(
+  "--section-exit-opacity",
+  String(1 - exitProgress)
+);
+
+section.style.setProperty(
+  "--section-exit-blur",
+  `${exitProgress * 8}px`
+);
+if (section.id === "experience") return;
 
       /*
        * Reveal начинает работать сразу,
@@ -258,13 +275,13 @@ export default function Home() {
         (viewport - rect.top) / (viewport * 0.82)
       );
 
-      const revealA = range(progress, 0.05, 0.36);
-      const revealB = range(progress, 0.18, 0.56);
-      const revealC = range(progress, 0.38, 0.78);
+      const revealA = range(progress, 0.08, 0.4);
+const revealB = range(progress, 0.2, 0.58);
+const revealC = range(progress, 0.4, 0.8);
 
-      setReveal(section, "reveal-a", revealA, 32, 5);
-      setReveal(section, "reveal-b", revealB, 38, 5);
-      setReveal(section, "reveal-c", revealC, 30, 3);
+setReveal(section, "reveal-a", revealA, 36, 7);
+setReveal(section, "reveal-b", revealB, 42, 7);
+setReveal(section, "reveal-c", revealC, 34, 5);
     });
   };
 

@@ -1285,3 +1285,16 @@ body{font-family:var(--font-sans)}
     min-height:100%;
   }
 }
+@media(max-width:700px){
+
+  #experience,
+  #menu,
+  #story,
+  #booking,
+  #reviews,
+  #contacts{
+    opacity:var(--section-exit-opacity,1);
+    filter:blur(var(--section-exit-blur,0));
+    transition:none!important;
+  }
+}
