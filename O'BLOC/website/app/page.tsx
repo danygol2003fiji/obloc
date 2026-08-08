@@ -191,9 +191,12 @@ export default function Home() {
         </div>
       </section>
       <AtmosphereSection />
-      </div>
 
-      <section className="menu-section" id="menu">
+<div className="menu-transition-zone">
+  <div className="menu-transition-pin" aria-hidden="true" />
+</div>
+
+<section className="menu-section" id="menu">
         <div className="shell">
           <div className="section-head">
             <div><p className="section-index">02 · Меню</p><h2>Вкусы, которые<br /><em>остаются.</em></h2></div>

@@ -603,8 +603,7 @@ body{font-family:var(--font-sans)}
   .mood-light{display:none!important}
 }
 @media(max-width:700px){
-
-  .mobile-fixed-nav{
+    .mobile-fixed-nav{
     color:#f7f0ea;
     transition:
       opacity .22s ease,
@@ -639,11 +638,6 @@ body{font-family:var(--font-sans)}
     pointer-events:none;
   }
 
-  .hero-foot{
-    width:100%;
-    padding-left:28px!important;
-    padding-right:28px!important;
-  }
   @media(max-width:700px){
 
   /* 1. Верхняя зона: контент не залезает под O’BLOCK и гамбургер */
@@ -835,83 +829,29 @@ body{font-family:var(--font-sans)}
     visibility:hidden!important;
     pointer-events:none!important;
   }
+}
+}
+@media(max-width:700px){
 
-
-  /* ========================================
-     HERO FOOTER
-     Возвращаем время строго в левый нижний угол
-  ======================================== */
-
-  .hero-foot{
-    width:100%!important;
-    left:0!important;
-    right:0!important;
-
-    padding-left:28px!important;
-    padding-right:28px!important;
-    margin-left:0!important;
-    margin-right:0!important;
-
-    box-sizing:border-box!important;
-
-    display:flex!important;
-    align-items:flex-end!important;
-    justify-content:space-between!important;
-  }
-
-  .hero-foot > *:first-child{
-    margin-left:0!important;
-    margin-right:0!important;
-  }
-
-  .hero-foot > *:last-child{
-    margin-left:auto!important;
-  }
-
-
-  /* ========================================
-     STACKED SECTIONS
-     Каждый следующий раздел заезжает сверху
-     на предыдущий
-  ======================================== */
-
-  #experience{
+  .menu-transition-zone{
     position:relative;
-    z-index:10;
+    height:100dvh;
+    margin-top:-1px;
+    pointer-events:none;
+  }
+
+  .menu-transition-pin{
+    position:sticky;
+    top:0;
+    height:100dvh;
   }
 
   #menu{
     position:relative;
     z-index:20;
-    margin-top:-14px;
+    margin-top:-100dvh;
+    min-height:100dvh;
+    border-radius:8px 8px 0 0;
+    box-shadow:0 -8px 24px rgba(24,12,8,.10);
   }
-
-  #story{
-    position:relative;
-    z-index:30;
-    margin-top:-14px;
-  }
-
-  #booking{
-    position:relative;
-    z-index:40;
-    margin-top:-14px;
-  }
-
-  #contacts{
-    position:relative;
-    z-index:50;
-    margin-top:-14px;
-  }
-
-  #menu,
-  #story,
-  #booking,
-  #contacts{
-    border-radius:14px 14px 0 0;
-    box-shadow:0 -18px 46px rgba(20,10,7,.16);
-    overflow:hidden;
-  }
-
-}
 }
