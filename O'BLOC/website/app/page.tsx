@@ -200,7 +200,26 @@ export default function Home() {
       `${(1 - value) * blur}px`
     );
   };
+const setExitFade = (element: HTMLElement) => {
+  const rect = element.getBoundingClientRect();
 
+  const fadeStart = 190;
+  const fadeEnd = 110;
+
+  const progress = clamp(
+    (fadeStart - rect.top) / (fadeStart - fadeEnd)
+  );
+
+  element.style.setProperty(
+    "--exit-opacity",
+    String(1 - progress)
+  );
+
+  element.style.setProperty(
+    "--exit-blur",
+    `${progress * 7}px`
+  );
+};
   const clear = () => {
     sections.forEach((section) => {
       section.style.removeProperty("--stack-top");
@@ -225,6 +244,20 @@ section.style.removeProperty("--section-exit-blur");
     }
 
     const viewport = window.innerHeight;
+    const exitElements = document.querySelectorAll<HTMLElement>(`
+  #experience .atmosphere-intro,
+  #experience .mood,
+  #menu .section-head,
+  #menu .menu-item,
+  #story .story-content > *,
+  #booking .booking-grid > *,
+  #reviews .reviews-inner > *,
+  #reviews .review-links > *,
+  #contacts .footer-top > *,
+  #contacts .footer-bottom > *
+`);
+
+exitElements.forEach(setExitFade);
 
     sections.forEach((section, index) => {
       const height = section.offsetHeight;
