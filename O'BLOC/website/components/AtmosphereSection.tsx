@@ -39,22 +39,13 @@ export default function AtmosphereSection() {
       frame = 0;
       if (!visible || document.hidden || reduceMotion.matches) return;
 
-     const viewport = window.innerHeight;
-const start = section.offsetTop;
-
-const desktopProgress = clamp(
-  (window.scrollY - start) / viewport
-);
-
-const mobileProgress = clamp(
-  (window.scrollY - (start - viewport * 0.5)) / viewport
-);
-
-const progress = desktop.matches
-  ? desktopProgress
-  : mobileProgress;
-
-const eased = progress * progress * (3 - 2 * progress);
+      const viewport = window.innerHeight;
+      const start = section.offsetTop;
+      const revealLead = desktop.matches ? 0.68 : 0.72;
+      const progress = clamp(
+        (window.scrollY - (start - viewport * revealLead)) / viewport
+      );
+      const eased = progress * progress * (3 - 2 * progress);
 
       section.style.setProperty("--panel-y", `${((1 - eased) * viewport * 0.28).toFixed(2)}px`);
       section.style.setProperty("--panel-scale", (0.988 + eased * 0.012).toFixed(4));
@@ -256,16 +247,16 @@ section.removeEventListener("touchcancel", onTouchEnd);
       <div className="shell manifesto-grid atmosphere-intro">
         <p className="section-index atmosphere-label">01 · АТМОСФЕРА</p>
         <div>
-          <h2 className="atmosphere-heading">
+          <h2 className="atmosphere-heading" data-mobile-exit>
             <span className="atmosphere-mask"><span className="atmosphere-line atmosphere-line-one">O’BLOCK — это не просто лаундж.</span></span>
             <span className="atmosphere-mask"><span className="atmosphere-line atmosphere-line-two">Это пространство для <em className="atmosphere-pink-word">настоящего.</em></span></span>
           </h2>
-          <p className="body-copy atmosphere-copy">Мы собрали всё, что делает вечер особенным: внимание к деталям, честные вкусы, правильный свет и людей, которые знают, когда быть рядом, а когда — оставить вас наедине с моментом.</p>
+          <p className="body-copy atmosphere-copy" data-mobile-exit>Мы собрали всё, что делает вечер особенным: внимание к деталям, честные вкусы, правильный свет и людей, которые знают, когда быть рядом, а когда — оставить вас наедине с моментом.</p>
         </div>
       </div>
       <div className="mood-grid shell atmosphere-cards">
         {cards.map((card) => (
-          <article className={`mood ${card.className}`} key={card.number}>
+          <article className={`mood ${card.className}`} data-mobile-exit key={card.number}>
             <div className="mood-visual" aria-hidden="true" />
             <div className="mood-light" aria-hidden="true" />
             <div className="mood-content"><span>{card.number}</span><h3>{card.title}</h3><p>{card.copy}</p></div>

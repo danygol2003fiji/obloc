@@ -704,145 +704,41 @@ body{font-family:var(--font-sans)}
     box-shadow:0 -12px 34px rgba(24,12,8,.13);
   }
 
-  #menu .section-head > div{
-    opacity:var(--reveal-a-opacity,1);
-    transform:translate3d(0,var(--reveal-a-y,0),0);
-    filter:blur(var(--reveal-a-blur,0));
-  }
-
-  #menu .section-head > p,
-  #menu .menu-list,
-  #menu .menu-feature{
-    opacity:var(--reveal-b-opacity,1);
-    transform:translate3d(0,var(--reveal-b-y,0),0);
-    filter:blur(var(--reveal-b-blur,0));
-  }
-
-  #menu .drinks{
-    opacity:var(--reveal-c-opacity,1);
-    transform:translate3d(0,var(--reveal-c-y,0),0);
-    filter:blur(var(--reveal-c-blur,0));
-  }
-
-  #story .section-index{
+  [data-reveal="a"]{
     opacity:min(var(--reveal-a-opacity,1),var(--content-exit-opacity,1));
     transform:translate3d(0,var(--reveal-a-y,0),0);
     filter:blur(var(--reveal-a-blur,0)) blur(var(--content-exit-blur,0));
   }
 
-  #story h2{
-    opacity:var(--reveal-a-opacity,1);
-    transform:translate3d(0,var(--reveal-a-y,0),0);
-    filter:blur(var(--reveal-a-blur,0));
-  }
-
-  #story .story-content p:not(.section-index){
-    opacity:var(--reveal-b-opacity,1);
+  [data-reveal="b"]{
+    opacity:min(var(--reveal-b-opacity,1),var(--content-exit-opacity,1));
     transform:translate3d(0,var(--reveal-b-y,0),0);
-    filter:blur(var(--reveal-b-blur,0));
+    filter:blur(var(--reveal-b-blur,0)) blur(var(--content-exit-blur,0));
   }
 
-  #story .metrics{
-    opacity:var(--reveal-c-opacity,1);
-    transform:translate3d(0,var(--reveal-c-y,0),0);
-    filter:blur(var(--reveal-c-blur,0));
-  }
-
-  #booking .section-index,
-  #booking h2{
-    opacity:var(--reveal-a-opacity,1);
-    transform:translate3d(0,var(--reveal-a-y,0),0);
-    filter:blur(var(--reveal-a-blur,0));
-  }
-
-  #booking .booking-grid > div > p:last-child{
-    opacity:var(--reveal-b-opacity,1);
-    transform:translate3d(0,var(--reveal-b-y,0),0);
-    filter:blur(var(--reveal-b-blur,0));
-  }
-
-  #booking .booking-form{
+  [data-reveal="c"]{
     opacity:min(var(--reveal-c-opacity,1),var(--content-exit-opacity,1));
     transform:translate3d(0,var(--reveal-c-y,0),0);
     filter:blur(var(--reveal-c-blur,0)) blur(var(--content-exit-blur,0));
   }
 
-  #reviews .section-index{
-    opacity:var(--reveal-a-opacity,1);
-    transform:translate3d(0,var(--reveal-a-y,0),0);
-    filter:blur(var(--reveal-a-blur,0));
-  }
-
-  #reviews blockquote{
-    opacity:var(--reveal-b-opacity,1);
-    transform:translate3d(0,var(--reveal-b-y,0),0);
-    filter:blur(var(--reveal-b-blur,0));
-  }
-
-  #reviews .rating{
-    opacity:min(var(--reveal-c-opacity,1),var(--content-exit-opacity,1));
-    transform:translate3d(0,var(--reveal-c-y,0),0);
-    filter:blur(var(--reveal-c-blur,0)) blur(var(--content-exit-blur,0));
-  }
-
-  #reviews .review-links{
-    opacity:var(--reveal-c-opacity,1);
-    transform:translate3d(0,var(--reveal-c-y,0),0);
-    filter:blur(var(--reveal-c-blur,0));
-  }
-
-  #contacts .footer-top{
-    opacity:var(--reveal-a-opacity,1);
-    transform:translate3d(0,var(--reveal-a-y,0),0);
-    filter:blur(var(--reveal-a-blur,0));
-  }
-
-  #contacts .footer-bottom{
-    opacity:var(--reveal-b-opacity,1);
-    transform:translate3d(0,var(--reveal-b-y,0),0);
-    filter:blur(var(--reveal-b-blur,0));
-  }
-
-  #menu .section-head,
-  #menu .menu-item,
-  #story .story-content > div,
-  #booking .booking-grid > div,
-  #reviews .reviews-inner > div:first-child,
-  #reviews .review-links > *,
-  #contacts .footer-top > *,
-  #contacts .footer-bottom > *{
+  [data-mobile-exit]:not([data-reveal]):not(.mood):not(.atmosphere-copy){
     opacity:var(--content-exit-opacity,1);
     filter:blur(var(--content-exit-blur,0));
   }
 
-  #experience .atmosphere-intro{
-    opacity:var(--content-exit-opacity,1);
-    filter:blur(var(--content-exit-blur,0));
+  .atmosphere-panel[data-motion="mobile"] .atmosphere-copy[data-mobile-exit]{
+    opacity:min(var(--copy-opacity,1),var(--content-exit-opacity,1));
+    filter:blur(var(--copy-blur,0)) blur(var(--content-exit-blur,0));
   }
 
-  .atmosphere-panel[data-motion="mobile"] .mood{
+  .atmosphere-panel[data-motion="mobile"] .mood[data-mobile-exit]{
     opacity:min(var(--card-opacity,1),var(--content-exit-opacity,1));
-    filter:blur(var(--content-exit-blur,0));
+    filter:blur(var(--card-blur,0)) blur(var(--content-exit-blur,0));
   }
 
-  #menu .section-head > *,
-  #menu .menu-list,
-  #menu .menu-feature,
-  #menu .drinks,
-  #story .section-index,
-  #story h2,
-  #story .story-content p,
-  #story .metrics,
-  #booking .section-index,
-  #booking h2,
-  #booking .booking-grid > div > p:last-child,
-  #booking .booking-form,
-  #reviews .section-index,
-  #reviews blockquote,
-  #reviews .rating,
-  #reviews .review-links,
-  #contacts .footer-top,
-  #contacts .footer-bottom{
+  [data-reveal],
+  [data-mobile-exit]{
     transition:none!important;
     will-change:transform,opacity,filter;
   }
@@ -1040,4 +936,108 @@ body{font-family:var(--font-sans)}
     transform:none!important;
     filter:none!important;
   }
+}
+
+/* Final responsive corrections: concise cocktail grid and readable stacked chapters. */
+html,
+body{
+  overflow-x:clip;
+}
+
+.drinks{
+  grid-template-columns:minmax(190px,.9fr) repeat(5,minmax(0,1fr));
+}
+
+.drink{
+  display:block;
+  min-height:164px;
+}
+
+.drink .drink-strength{
+  display:block;
+  margin:0 0 24px;
+  color:var(--pink);
+  font-size:8px;
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.drink h4{
+  font-size:clamp(17px,1.45vw,21px);
+  line-height:1.05;
+}
+
+.drink p{
+  margin-top:9px;
+  line-height:1.55;
+}
+
+.social-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 16px;
+  margin-top:12px;
+}
+
+.contact-phone{
+  color:#cec3bd!important;
+  font-size:11px!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+}
+
+@media(max-width:900px){
+  .drinks{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .drinks-title{grid-column:1/-1}
+}
+
+@media(max-width:700px){
+  .section-index{display:none!important}
+
+  .mobile-fixed-nav{
+    height:102px;
+  }
+
+  .mobile-fixed-nav.on-dark{
+    background:#160806!important;
+  }
+
+  .mobile-fixed-nav.on-light{
+    background:#f2eee8!important;
+  }
+
+  #experience,
+  #menu,
+  #story,
+  #booking,
+  #reviews{
+    padding-top:132px!important;
+  }
+
+  #contacts{
+    padding-top:126px!important;
+  }
+
+  #story .story-content>div{
+    margin-top:0!important;
+  }
+
+  .hero-foot{
+    transform:none!important;
+  }
+
+  .mobile-menu{
+    overflow-x:hidden!important;
+  }
+
+  .social-links{
+    gap:14px 20px;
+  }
+}
+
+@media(max-width:600px){
+  .drinks{grid-template-columns:1fr}
+  .drinks-title{grid-column:auto}
+  .drink{min-height:0}
 }

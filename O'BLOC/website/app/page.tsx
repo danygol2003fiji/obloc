@@ -42,9 +42,22 @@ const menu = [
 ];
 
 const drinks = [
-  { name: "Pink Negroni", note: "Джин · вермут · клубника", price: "790" },
-  { name: "Midnight Sour", note: "Бурбон · смородина · лимон", price: "850" },
-  { name: "Velvet Highball", note: "Ром · кокос · содовая", price: "720" },
+  { name: "Поздний закат в Тортуге", note: "Банан · ром · виски · миндаль", strength: "4/5" },
+  { name: "Вишнёвая арабеска", note: "Вишня · малина · хвойный джин", strength: "3/5" },
+  { name: "Розовый прибой", note: "Манго · маракуйя · клюква", strength: "2/5" },
+  { name: "Северная ягода", note: "Малина · клюква · хвойный джин", strength: "3/5" },
+  { name: "Медовый виски", note: "Мёд · цитрус · виски · абсент", strength: "4/5" },
+];
+
+const reviewLinks = {
+  yandex: "https://yandex.ru/maps/org/o_blok/123087541406/?indoorLevel=1&ll=40.982967%2C56.993710&z=16.62",
+  twoGis: "https://2gis.ru/ivanovo/inside/9148572398257785/firm/70000001114189971?m=40.982911%2C56.993641%2F16",
+};
+
+const socialLinks = [
+  { label: "Telegram", href: "https://t.me/oblock_ivanovo" },
+  { label: "VK", href: "https://vk.ru/oblock_lounge" },
+  { label: "Instagram", href: "https://www.instagram.com/oblock.ivanovo?igsh=MXBtNWF1N240eHFheA==" },
 ];
 
 export default function Home() {
@@ -61,7 +74,7 @@ export default function Home() {
       { id: "menu", label: "02 · МЕНЮ", light: false, color: "#2a140e" },
       { id: "story", label: "03 · ИСТОРИЯ", light: false, color: "#1b0c0a" },
       { id: "booking", label: "04 · БРОНИРОВАНИЕ", light: true, color: "#f2eee8" },
-      { id: "reviews", label: "05 · ГОСТИ", light: false, color: "#24110c" },
+      { id: "reviews", label: "05 · ГОВОРЯТ ГОСТИ", light: false, color: "#24110c" },
       { id: "contacts", label: "06 · КОНТАКТЫ", light: false, color: "#160806" },
     ];
 
@@ -78,6 +91,10 @@ export default function Home() {
 
         const rect = element.getBoundingClientRect();
         if (rect.top <= markerY && rect.bottom > markerY) active = section;
+      }
+
+      if (window.scrollY >= document.documentElement.scrollHeight - window.innerHeight - 4) {
+        active = sections[sections.length - 1];
       }
 
       setHeaderOnLight(active.light);
@@ -128,7 +145,7 @@ export default function Home() {
       );
 
     const focusFrame = requestAnimationFrame(() => {
-      getFocusable()[0]?.focus({ preventScroll: true });
+      dialog?.querySelector<HTMLElement>(".menu-close")?.focus({ preventScroll: true });
     });
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -184,18 +201,7 @@ export default function Home() {
       .filter((section): section is HTMLElement => Boolean(section));
 
     const exitElements = Array.from(
-      document.querySelectorAll<HTMLElement>(`
-        #experience .atmosphere-intro,
-        #experience .mood,
-        #menu .section-head,
-        #menu .menu-item,
-        #story .story-content > *,
-        #booking .booking-grid > *,
-        #reviews .reviews-inner > *,
-        #reviews .review-links > *,
-        #contacts .footer-top > *,
-        #contacts .footer-bottom > *
-      `)
+      document.querySelectorAll<HTMLElement>("[data-mobile-exit]")
     );
 
     let frame = 0;
@@ -214,9 +220,9 @@ export default function Home() {
 
     const applyContentExit = (element: HTMLElement) => {
       const rect = element.getBoundingClientRect();
-      const headerEdge = 105;
-      const fadeStart = headerEdge + 130;
-      const progress = clamp((fadeStart - rect.top) / (fadeStart - headerEdge));
+      const headerEdge = 82;
+      const fadeStart = headerEdge + 150;
+      const progress = clamp((fadeStart - rect.bottom) / (fadeStart - headerEdge));
 
       element.style.setProperty("--content-exit-opacity", String(1 - progress));
       element.style.setProperty("--content-exit-blur", `${progress * 3.5}px`);
@@ -370,7 +376,7 @@ export default function Home() {
         <header className="nav shell">
           <a className="brand" href="#home" aria-label="O’BLOCK — на главную">O’BLOCK</a>
           <nav aria-label="Основная навигация">
-            <a href="#experience">Атмосфера</a>
+            <a href="#experience" onClick={(event) => { event.preventDefault(); goToSection("experience"); }}>Атмосфера</a>
             <a href="#menu">Меню</a>
             <a href="#story">О нас</a>
             <a href="#contacts">Контакты</a>
@@ -425,6 +431,10 @@ export default function Home() {
         О нас
       </button>
 
+      <button type="button" onClick={() => goToSection("reviews")}>
+        Отзывы
+      </button>
+
       <button type="button" onClick={() => goToSection("contacts")}>
         Контакты
       </button>
@@ -455,26 +465,31 @@ export default function Home() {
         </div>
       </section>
       <AtmosphereSection />
- <section className="menu-section" id="menu">
+      </div>
+
+      <section className="menu-section" id="menu">
         <div className="shell">
           <div className="section-head">
-            <div><p className="section-index">02 · Меню</p><h2>Вкусы, которые<br /><em>остаются.</em></h2></div>
-            <p>Мы не делим вкусы на простые и сложные.<br />Только на те, к которым хочется вернуться.</p>
+            <div>
+              <p className="section-index">02 · Меню</p>
+              <h2 data-reveal="a" data-mobile-exit>Вкусы, которые<br /><em>остаются.</em></h2>
+            </div>
+            <p data-reveal="b" data-mobile-exit>Мы не делим вкусы на простые и сложные.<br />Только на те, к которым хочется вернуться.</p>
           </div>
           <div className="menu-layout">
             <div className="menu-list">
-              {menu.map((item, index) => <article className="menu-item" key={item.name}>
+              {menu.map((item, index) => <article className="menu-item" data-reveal="b" data-mobile-exit key={item.name}>
                 <span className="number">0{index + 1}</span><div><small>{item.tag}</small><h3>{item.name}</h3><p>{item.note}</p></div><strong>{item.price} ₽</strong>
               </article>)}
             </div>
-            <div className="menu-feature">
+            <div className="menu-feature" data-reveal="b" data-mobile-exit>
               <div className="coal-art"><span /><span /><span /><i /></div>
               <div><small>Выбор мастера</small><p>Расскажите о настроении — остальное мы возьмём на себя.</p></div>
             </div>
           </div>
           <div className="drinks">
-            <div className="drinks-title"><span>BAR</span><h3>Коктейльная<br />карта</h3></div>
-            {drinks.map((drink) => <div className="drink" key={drink.name}><div><h4>{drink.name}</h4><p>{drink.note}</p></div><strong>{drink.price} ₽</strong></div>)}
+            <div className="drinks-title" data-reveal="c" data-mobile-exit><span>BAR</span><h3>АВТОРСКИЕ<br />КОКТЕЙЛИ</h3></div>
+            {drinks.map((drink) => <div className="drink" data-reveal="c" data-mobile-exit key={drink.name}><strong className="drink-strength">Крепость · {drink.strength}</strong><h4>{drink.name}</h4><p>{drink.note}</p></div>)}
           </div>
         </div>
       </section>
@@ -484,37 +499,50 @@ export default function Home() {
         <div className="shell story-content">
           <p className="section-index">03 · История</p>
           <div>
-            <h2>Мы начинали<br />с одной <em>идеи.</em></h2>
-            <p>Создать место, в которое хочется возвращаться не ради статуса, а ради ощущения. С 2021 года мы меняемся, пробуем новое и растём вместе с нашими гостями.</p>
-            <div className="metrics"><div><strong>4,9</strong><span>средняя оценка гостей</span></div><div><strong>4+</strong><span>года создаём атмосферу</span></div><div><strong>70</strong><span>авторских вкусов</span></div></div>
+            <h2 data-reveal="a" data-mobile-exit>Мы начинали<br />с одной <em>идеи.</em></h2>
+            <p data-reveal="b" data-mobile-exit>Создать место, куда возвращаются не ради статуса, а ради ощущения. Уже год мы пробуем новое и растём вместе с нашими гостями.</p>
+            <div className="metrics">
+              <div data-reveal="c" data-mobile-exit><strong>5,0</strong><span>средняя оценка гостей</span></div>
+              <div data-reveal="c" data-mobile-exit><strong>1</strong><span>год создаём атмосферу</span></div>
+              <div data-reveal="c" data-mobile-exit><strong>7/7</strong><span>дней в неделю для своих</span></div>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="booking" id="booking">
         <div className="shell booking-grid">
-          <div><p className="section-index">04 · Бронирование</p><h2>Ваш вечер<br />начинается <em>здесь.</em></h2><p>Оставьте заявку — администратор свяжется с вами и поможет выбрать лучший стол.</p></div>
-          <form className="booking-form" onSubmit={(e) => e.preventDefault()}>
-            <label><span>Ваше имя</span><input type="text" placeholder="Как к вам обращаться?" /></label>
-            <label><span>Телефон</span><input type="tel" placeholder="+7 (___) ___-__-__" /></label>
-            <div className="field-row"><label><span>Дата</span><input type="date" /></label><label><span>Гостей</span><select defaultValue="2"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></label></div>
-            <button className="button primary" type="submit">Отправить заявку <b>↗</b></button>
-            <small>Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</small>
+          <div><p className="section-index">04 · Бронирование</p><h2 data-reveal="a" data-mobile-exit>Ваш вечер<br />начинается <em>здесь.</em></h2><p data-reveal="b" data-mobile-exit>Оставьте заявку — администратор свяжется с вами и поможет выбрать лучший стол.</p></div>
+          <form className="booking-form" data-reveal="c" onSubmit={(e) => e.preventDefault()}>
+            <label data-mobile-exit><span>Ваше имя</span><input type="text" placeholder="Как к вам обращаться?" /></label>
+            <label data-mobile-exit><span>Телефон</span><input type="tel" placeholder="+7 (___) ___-__-__" /></label>
+            <div className="field-row" data-mobile-exit><label><span>Дата</span><input type="date" /></label><label><span>Гостей</span><select defaultValue="2"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></label></div>
+            <button className="button primary" data-mobile-exit type="submit">Отправить заявку <b>↗</b></button>
+            <small data-mobile-exit>Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</small>
           </form>
         </div>
       </section>
 
       <section className="reviews" id="reviews">
-        <div className="shell reviews-inner"><div><p className="section-index">Говорят гости</p><blockquote>«В O’BLOCK приходишь за вкусом, а остаёшься из-за ощущения, что ты именно там, где должен быть».</blockquote></div><div className="rating"><strong>4,9</strong><div>★★★★★<span>327 отзывов</span></div></div></div>
-        <div className="shell review-links"><a href="#" aria-label="Отзывы O’BLOCK на Яндекс Картах"><b>Я</b><span>Яндекс Карты<small>Читать отзывы ↗</small></span></a><a href="#" aria-label="Отзывы O’BLOCK в 2ГИС"><b>2</b><span>2ГИС<small>Читать отзывы ↗</small></span></a></div>
+        <div className="shell reviews-inner">
+          <div><p className="section-index">Говорят гости</p><blockquote data-reveal="a" data-mobile-exit>«В O’BLOCK приходишь за вкусом, а остаёшься из-за ощущения, что ты именно там, где должен быть».</blockquote></div>
+          <div className="rating" data-reveal="b" data-mobile-exit><strong>5,0</strong><div>★★★★★<span>Отзывы гостей</span></div></div>
+        </div>
+        <div className="shell review-links" data-reveal="c">
+          <a href={reviewLinks.yandex} target="_blank" rel="noreferrer" data-mobile-exit aria-label="Отзывы O’BLOCK на Яндекс Картах"><b>Я</b><span>Яндекс Карты<small>Читать отзывы ↗</small></span></a>
+          <a href={reviewLinks.twoGis} target="_blank" rel="noreferrer" data-mobile-exit aria-label="Отзывы O’BLOCK в 2ГИС"><b>2</b><span>2ГИС<small>Читать отзывы ↗</small></span></a>
+        </div>
       </section>
 
       <footer id="contacts">
-        <div className="shell footer-top"><div className="footer-brand">O’BLOCK<small>Private lounge</small></div><div><small>Адрес</small><p>{VENUE_ADDRESS}</p><a href={mapUrl} target="_blank" rel="noreferrer" aria-label={`Открыть адрес O’BLOCK: ${VENUE_ADDRESS} на карте`}>Построить маршрут ↗</a></div><div><small>Связаться</small><p>+7 (900) 000-00-00</p><p>@oblock_lounge</p></div><div><small>Режим работы</small><p>Вс–Чт · {weeklySchedule.sunday.open}–{weeklySchedule.sunday.close}</p><p>Пт–Сб · {weeklySchedule.friday.open}–{weeklySchedule.friday.close}</p></div></div>
-        <div className="shell footer-bottom"><span>© 2026 O’BLOCK</span><span>18+ · Курение вредит вашему здоровью</span><a href="#">Политика конфиденциальности</a></div>
+        <div className="shell footer-top">
+          <div className="footer-brand" data-reveal="a" data-mobile-exit>O’BLOCK<small>Private lounge</small></div>
+          <div data-reveal="b" data-mobile-exit><small>Адрес</small><p>{VENUE_ADDRESS}</p><a href={mapUrl} target="_blank" rel="noreferrer" aria-label={`Открыть адрес O’BLOCK: ${VENUE_ADDRESS} на карте`}>Построить маршрут ↗</a></div>
+          <div data-reveal="b" data-mobile-exit><small>Связаться</small><p><a className="contact-phone" href="tel:+79109888336">+7 (910) 988-83-36</a></p><div className="social-links">{socialLinks.map((social) => <a href={social.href} target="_blank" rel="noreferrer" key={social.label}>{social.label}</a>)}</div></div>
+          <div data-reveal="b" data-mobile-exit><small>Режим работы</small><p>Вс–Чт · {weeklySchedule.sunday.open}–{weeklySchedule.sunday.close}</p><p>Пт–Сб · {weeklySchedule.friday.open}–{weeklySchedule.friday.close}</p></div>
+        </div>
+        <div className="shell footer-bottom" data-reveal="c"><span data-mobile-exit>© 2026 O’BLOCK</span><span data-mobile-exit>18+ · Курение вредит вашему здоровью</span><a href="#" data-mobile-exit>Политика конфиденциальности</a></div>
        </footer>
-
-</div>
 
 </main>
    );
