@@ -1287,12 +1287,27 @@ body{font-family:var(--font-sans)}
 }
 @media(max-width:700px){
 
-  #experience,
-  #menu,
-  #story,
-  #booking,
-  #reviews,
-  #contacts{
+  /* ATMOSPHERE */
+  #experience .atmosphere-intro,
+  #experience .atmosphere-cards,
+
+  /* MENU */
+  #menu .section-head,
+  #menu .menu-layout,
+
+  /* STORY */
+  #story .story-content,
+
+  /* BOOKING */
+  #booking .booking-grid,
+
+  /* REVIEWS */
+  #reviews .reviews-inner,
+  #reviews .review-links,
+
+  /* CONTACTS */
+  #contacts .footer-top,
+  #contacts .footer-bottom{
     opacity:var(--section-exit-opacity,1);
     filter:blur(var(--section-exit-blur,0));
     transition:none!important;
