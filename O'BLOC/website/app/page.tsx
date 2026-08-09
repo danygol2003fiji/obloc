@@ -51,318 +51,277 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerOnLight, setHeaderOnLight] = useState(false);
   const [headerLabel, setHeaderLabel] = useState("PRIVATE LOUNGE · SINCE 2026");
-   const menuDialogRef = useRef<HTMLDivElement>(null);
+  const menuDialogRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-  const sections = [
-  { id: "home", light: false, color: "#21100c" },
-  { id: "experience", light: true, color: "#f2eee8" },
-  { id: "menu", light: false, color: "#2a140e" },
-  { id: "story", light: false, color: "#1b0c0a" },
-  { id: "booking", light: true, color: "#f2eee8" },
-  { id: "reviews", light: false, color: "#24110c" },
-  { id: "contacts", light: false, color: "#160806" },
-];
+    const sections = [
+      { id: "home", label: "PRIVATE LOUNGE · SINCE 2026", light: false, color: "#21100c" },
+      { id: "experience", label: "01 · АТМОСФЕРА", light: true, color: "#f2eee8" },
+      { id: "menu", label: "02 · МЕНЮ", light: false, color: "#2a140e" },
+      { id: "story", label: "03 · ИСТОРИЯ", light: false, color: "#1b0c0a" },
+      { id: "booking", label: "04 · БРОНИРОВАНИЕ", light: true, color: "#f2eee8" },
+      { id: "reviews", label: "05 · ГОСТИ", light: false, color: "#24110c" },
+      { id: "contacts", label: "06 · КОНТАКТЫ", light: false, color: "#160806" },
+    ];
 
-  const updateHeaderTheme = () => {
-    const markerY = 110;
+    let frame = 0;
 
-    let active = sections[0];
+    const updateHeader = () => {
+      frame = 0;
+      const markerY = 110;
+      let active = sections[0];
 
-    for (const section of sections) {
-      const element = document.getElementById(section.id);
-      if (!element) continue;
+      for (const section of sections) {
+        const element = document.getElementById(section.id);
+        if (!element) continue;
 
-      const rect = element.getBoundingClientRect();
-
-      if (rect.top <= markerY && rect.bottom > markerY) {
-        active = section;
+        const rect = element.getBoundingClientRect();
+        if (rect.top <= markerY && rect.bottom > markerY) active = section;
       }
-    }
 
-    setHeaderOnLight(active.light);
+      setHeaderOnLight(active.light);
+      setHeaderLabel(active.label);
+      document.documentElement.style.backgroundColor = active.color;
+      document.body.style.backgroundColor = active.color;
 
-    document.documentElement.style.backgroundColor = active.color;
-    document.body.style.backgroundColor = active.color;
+      let themeMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+      if (!themeMeta) {
+        themeMeta = document.createElement("meta");
+        themeMeta.name = "theme-color";
+        document.head.appendChild(themeMeta);
+      }
+      themeMeta.content = active.color;
+    };
 
-    let themeMeta = document.querySelector<HTMLMetaElement>(
-      'meta[name="theme-color"]'
-    );
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(updateHeader);
+    };
 
-    if (!themeMeta) {
-      themeMeta = document.createElement("meta");
-      themeMeta.name = "theme-color";
-      document.head.appendChild(themeMeta);
-    }
+    updateHeader();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    window.visualViewport?.addEventListener("resize", schedule);
 
-    themeMeta.content = active.color;
-  };
-
-  updateHeaderTheme();
-
-  window.addEventListener("scroll", updateHeaderTheme, {
-    passive: true,
-  });
-
-  window.addEventListener("resize", updateHeaderTheme);
-
-  return () => {
-    window.removeEventListener("scroll", updateHeaderTheme);
-    window.removeEventListener("resize", updateHeaderTheme);
-  };
-}, []);
- useEffect(() => {
-  const sections = [
-    { id: "home", label: "PRIVATE LOUNGE · SINCE 2026" },
-    { id: "experience", label: "01 · АТМОСФЕРА" },
-    { id: "menu", label: "02 · МЕНЮ" },
-    { id: "story", label: "03 · ИСТОРИЯ" },
-    { id: "booking", label: "04 · БРОНИРОВАНИЕ" },
-    { id: "reviews", label: "05 · ГОСТИ" },
-    { id: "contacts", label: "06 · КОНТАКТЫ" },
-  ];
-
-  const updateHeaderLabel = () => {
-    const markerY = 110;
-
-    let currentLabel = sections[0].label;
-
-    for (const section of sections) {
-      const element = document.getElementById(section.id);
-      if (!element) continue;
-
-      const rect = element.getBoundingClientRect();
-
-      if (rect.top <= markerY && rect.bottom > markerY) {
-        currentLabel = section.label;
-       }
-    }
-
-    setHeaderLabel(currentLabel);
-  };
-
-  updateHeaderLabel();
-
-  window.addEventListener("scroll", updateHeaderLabel, { passive: true });
-  window.addEventListener("resize", updateHeaderLabel);
-
-  return () => {
-    window.removeEventListener("scroll", updateHeaderLabel);
-    window.removeEventListener("resize", updateHeaderLabel);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      window.visualViewport?.removeEventListener("resize", schedule);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
 
   useEffect(() => {
-  const clamp = (value: number) =>
-    Math.max(0, Math.min(1, value));
+    if (!menuOpen) return;
 
-  const range = (
-    progress: number,
-    start: number,
-    end: number
-  ) => clamp((progress - start) / (end - start));
+    const dialog = menuDialogRef.current;
+    const previouslyFocused = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
 
-  const ids = [
-    "experience",
-    "menu",
-    "story",
-    "booking",
-    "reviews",
-    "contacts",
-  ];
+    const getFocusable = () =>
+      Array.from(
+        dialog?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      );
 
-  const sections = ids
-    .map((id) => document.getElementById(id))
-    .filter((section): section is HTMLElement => Boolean(section));
-
-  let frame = 0;
-
-  const setReveal = (
-    section: HTMLElement,
-    name: string,
-    value: number,
-    distance: number,
-    blur: number
-  ) => {
-    section.style.setProperty(
-      `--${name}-opacity`,
-      String(value)
-    );
-
-    section.style.setProperty(
-      `--${name}-y`,
-      `${(1 - value) * distance}px`
-    );
-
-    section.style.setProperty(
-      `--${name}-blur`,
-      `${(1 - value) * blur}px`
-    );
-  };
-const setExitFade = (element: HTMLElement) => {
-  const rect = element.getBoundingClientRect();
-
-  const fadeStart = 190;
-  const fadeEnd = 110;
-
-  const progress = clamp(
-    (fadeStart - rect.top) / (fadeStart - fadeEnd)
-  );
-
-  element.style.setProperty(
-    "--exit-opacity",
-    String(1 - progress)
-  );
-
-  element.style.setProperty(
-    "--exit-blur",
-    `${progress * 7}px`
-  );
-};
-  const clear = () => {
-    sections.forEach((section) => {
-      section.style.removeProperty("--stack-top");
-      section.style.removeProperty("--stack-z");
-
-      ["reveal-a", "reveal-b", "reveal-c"].forEach((name) => {
-        section.style.removeProperty(`--${name}-opacity`);
-        section.style.removeProperty(`--${name}-y`);
-        section.style.removeProperty(`--${name}-blur`);
-      });
-      section.style.removeProperty("--section-exit-opacity");
-section.style.removeProperty("--section-exit-blur");
+    const focusFrame = requestAnimationFrame(() => {
+      getFocusable()[0]?.focus({ preventScroll: true });
     });
-  };
 
-  const update = () => {
-    frame = 0;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMenuOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = getFocusable();
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      cancelAnimationFrame(focusFrame);
+      document.removeEventListener("keydown", handleKeyDown);
+      previouslyFocused?.focus({ preventScroll: true });
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    const clamp = (value: number) => Math.max(0, Math.min(1, value));
+    const range = (progress: number, start: number, end: number) =>
+      clamp((progress - start) / (end - start));
+
+    const sectionIds = [
+      "experience",
+      "menu",
+      "story",
+      "booking",
+      "reviews",
+      "contacts",
+    ];
+
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
+
+    const exitElements = Array.from(
+      document.querySelectorAll<HTMLElement>(`
+        #experience .atmosphere-intro,
+        #experience .mood,
+        #menu .section-head,
+        #menu .menu-item,
+        #story .story-content > *,
+        #booking .booking-grid > *,
+        #reviews .reviews-inner > *,
+        #reviews .review-links > *,
+        #contacts .footer-top > *,
+        #contacts .footer-bottom > *
+      `)
+    );
+
+    let frame = 0;
+
+    const setReveal = (
+      section: HTMLElement,
+      name: string,
+      value: number,
+      distance: number,
+      blur: number
+    ) => {
+      section.style.setProperty(`--${name}-opacity`, String(value));
+      section.style.setProperty(`--${name}-y`, `${(1 - value) * distance}px`);
+      section.style.setProperty(`--${name}-blur`, `${(1 - value) * blur}px`);
+    };
+
+    const applyContentExit = (element: HTMLElement) => {
+      const rect = element.getBoundingClientRect();
+      const headerEdge = 105;
+      const fadeStart = headerEdge + 130;
+      const progress = clamp((fadeStart - rect.top) / (fadeStart - headerEdge));
+
+      element.style.setProperty("--content-exit-opacity", String(1 - progress));
+      element.style.setProperty("--content-exit-blur", `${progress * 3.5}px`);
+    };
+
+    const clear = () => {
+      sections.forEach((section) => {
+        section.style.removeProperty("--stack-top");
+        section.style.removeProperty("--stack-z");
+
+        ["reveal-a", "reveal-b", "reveal-c"].forEach((name) => {
+          section.style.removeProperty(`--${name}-opacity`);
+          section.style.removeProperty(`--${name}-y`);
+          section.style.removeProperty(`--${name}-blur`);
+        });
+      });
+
+      exitElements.forEach((element) => {
+        element.style.removeProperty("--content-exit-opacity");
+        element.style.removeProperty("--content-exit-blur");
+      });
+    };
+
+    const update = () => {
+      frame = 0;
+
+      if (
+        window.innerWidth > 700 ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        clear();
+        return;
+      }
+
+      const viewport = window.visualViewport?.height ?? window.innerHeight;
+      exitElements.forEach(applyContentExit);
+
+      sections.forEach((section, index) => {
+        const height = section.offsetHeight;
+        const rect = section.getBoundingClientRect();
+
+        section.style.setProperty("--stack-top", `${Math.min(0, viewport - height)}px`);
+        section.style.setProperty("--stack-z", String(10 + index * 10));
+
+        if (section.id === "experience") return;
+
+        const progress = clamp((viewport - rect.top) / (viewport * 0.82));
+        setReveal(section, "reveal-a", range(progress, 0.08, 0.4), 36, 4);
+        setReveal(section, "reveal-b", range(progress, 0.2, 0.58), 42, 4);
+        setReveal(section, "reveal-c", range(progress, 0.4, 0.8), 34, 3);
+      });
+    };
+
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    window.visualViewport?.addEventListener("resize", schedule);
+
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      window.visualViewport?.removeEventListener("resize", schedule);
+      if (frame) cancelAnimationFrame(frame);
+      clear();
+    };
+  }, []);
+
+  const goToSection = (id: string) => {
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    let top = 0;
+    let node: HTMLElement | null = target;
+
+    while (node) {
+      top += node.offsetTop;
+      node = node.offsetParent as HTMLElement | null;
+    }
+
+    setMenuOpen(false);
 
     if (window.innerWidth > 700) {
-      clear();
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: Math.max(0, top - 12), behavior: "smooth" });
+      });
       return;
     }
 
-    const viewport = window.innerHeight;
-    const exitElements = document.querySelectorAll<HTMLElement>(`
-  #experience .atmosphere-intro,
-  #experience .mood,
-  #menu .section-head,
-  #menu .menu-item,
-  #story .story-content > *,
-  #booking .booking-grid > *,
-  #reviews .reviews-inner > *,
-  #reviews .review-links > *,
-  #contacts .footer-top > *,
-  #contacts .footer-bottom > *
-`);
-
-exitElements.forEach(setExitFade);
-
-    sections.forEach((section, index) => {
-      const height = section.offsetHeight;
-
-      /*
-       * Высокая секция прокручивается обычно.
-       * Когда её низ доходит до низа экрана —
-       * последний кадр остаётся sticky.
-       */
-      section.style.setProperty(
-        "--stack-top",
-        `${Math.min(0, viewport - height)}px`
-      );
-
-      section.style.setProperty(
-        "--stack-z",
-        String(10 + index * 10)
-      );
-
-      /*
-       * Atmosphere уже имеет свою красивую
-       * scroll-анимацию — её не трогаем.
-       */
-       const rect = section.getBoundingClientRect();
-      const fadeStart = 180;
-const fadeEnd = 105;
-
-const exitProgress = clamp(
-  (fadeStart - rect.top) / (fadeStart - fadeEnd)
-);
-
-section.style.setProperty(
-  "--section-exit-opacity",
-  String(1 - exitProgress)
-);
-
-section.style.setProperty(
-  "--section-exit-blur",
-  `${exitProgress * 8}px`
-);
-if (section.id === "experience") return;
-
-      /*
-       * Reveal начинает работать сразу,
-       * как новая секция входит снизу.
-       */
-      const progress = clamp(
-        (viewport - rect.top) / (viewport * 0.82)
-      );
-
-      const revealA = range(progress, 0.08, 0.4);
-const revealB = range(progress, 0.2, 0.58);
-const revealC = range(progress, 0.4, 0.8);
-
-setReveal(section, "reveal-a", revealA, 36, 7);
-setReveal(section, "reveal-b", revealB, 42, 7);
-setReveal(section, "reveal-c", revealC, 34, 5);
-    });
-  };
-
-  const schedule = () => {
-    if (frame) return;
-    frame = requestAnimationFrame(update);
-  };
-
-  update();
-
-  window.addEventListener("scroll", schedule, {
-    passive: true,
-  });
-
-  window.addEventListener("resize", schedule);
-
-  return () => {
-    window.removeEventListener("scroll", schedule);
-    window.removeEventListener("resize", schedule);
-
-    if (frame) cancelAnimationFrame(frame);
-
-    clear();
-  };
-}, []);
-const goToSection = (id: string) => {
-  const target = document.getElementById(id);
-  if (!target) return;
-
-  let top = 0;
-  let node: HTMLElement | null = target;
-
-  while (node) {
-    top += node.offsetTop;
-    node = node.offsetParent as HTMLElement | null;
-  }
-
-  setMenuOpen(false);
-
-  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      window.scrollTo({
-        top: Math.max(0, top - 12),
-        behavior: "smooth",
+      const root = document.documentElement;
+      const previousScrollBehavior = root.style.scrollBehavior;
+
+      root.style.scrollBehavior = "auto";
+      window.scrollTo({ top: Math.max(0, top), left: 0, behavior: "auto" });
+
+      requestAnimationFrame(() => {
+        root.style.scrollBehavior = previousScrollBehavior;
       });
     });
-  });
-};
+  };
    return (
     <main>
       <script
@@ -379,6 +338,10 @@ const goToSection = (id: string) => {
     className="brand"
     href="#home"
     aria-label="O’BLOCK — на главную"
+    onClick={(event) => {
+      event.preventDefault();
+      goToSection("home");
+    }}
   >
     O’BLOCK
   </a>
@@ -393,6 +356,7 @@ const goToSection = (id: string) => {
     type="button"
     onClick={() => setMenuOpen(!menuOpen)}
     aria-expanded={menuOpen}
+    aria-controls="mobile-menu-dialog"
     aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
   >
     <i />
@@ -412,11 +376,12 @@ const goToSection = (id: string) => {
             <a href="#contacts">Контакты</a>
           </nav>
           <a className="book-link" href="#booking">Забронировать</a>
-          <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}><i /><i /></button>
+          <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-controls="mobile-menu-dialog" aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}><i /><i /></button>
         </header>
 
         {menuOpen && (
   <div
+    id="mobile-menu-dialog"
     ref={menuDialogRef}
     className="mobile-menu"
     role="dialog"
